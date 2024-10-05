@@ -1,0 +1,35 @@
+{
+    "default": "zh_CN",
+    "languages": [
+        {
+            "code": "zh_CN",
+            "name": "简体中文",
+            "lang": {
+                "app-title": "初中物化导师平台",
+                "welcome-msg": "欢迎使用初中物化导师平台，您今天想问什么问题?",
+                "newsess": "新建对话",
+                "delsess": "删除所有对话",
+                "export": "带出对话",
+                "stopgenerate": "停止生成",
+                "inputplaseholder": "发送信息",
+                "multi Search" :"根据提问，生成相应多个子问题的回答",
+                "vdbtable": "场景",
+                "switchvdb": "切换场景"
+            }
+        },
+        {
+            "code": "en_US",
+            "name": "English (US)",
+            "lang": {
+                "app-title": "Mentor Platform",
+                "welcome-msg": "Welcome to the Mentor platform, what questions do you want to ask today?",
+                "newsess": "Start New Conversation",
+                "delsess": "Delete All Conversations",
+                "export": "export dialog",
+                "stopgenerate": "Stop Generating",
+                "inputplaseholder":"Send Message",
+                "multi Search":"Generate answers to multiple sub-questions based on the questions asked"
+            }
+        }
+    ]
+}

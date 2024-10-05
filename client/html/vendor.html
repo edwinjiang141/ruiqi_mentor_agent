@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges">
+    <meta property="og:title" content="ChatGPT">
+    <meta property="og:image" content="https://openai.com/content/images/2022/11/ChatGPT.jpg">
+    <meta property="og:description" content="A conversational AI system that listens, learns, and challenges">
+    <meta property="og:url" content="https://chat.acy.dev">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="manifest" href="/assets/img/site.webmanifest">
+    <script src="/assets/js/icons.js"></script>
+    <script src="/assets/js/chat.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+    <link rel="stylesheet"
+        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css">
+    <script>
+        const user_image = `<img src="/assets/img/user.png" alt="User Avatar">`;
+        const gpt_image = `<img src="/assets/img/ai.png" alt="GPT Avatar">`;
+    </script>
+    <style>
+        .hljs {
+            color: #e9e9f4;
+            background: #28293629;
+            border-radius: var(--border-radius-1);
+            border: 1px solid var(--blur-border);
+            font-size: 15px;
+        }
+
+        #message-input {
+            margin-right: 30px;
+            height: 80px;
+        }
+
+        #message-input::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        #message-input::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        #message-input::-webkit-scrollbar-thumb {
+            background: #c7a2ff;
+        }
+
+        /* Handle on hover */
+        #message-input::-webkit-scrollbar-thumb:hover {
+            background: #8b3dff;
+        }
+
+        .title-bar {
+            background-color: var(--colour-5);
+            color: var(--colour-3);
+            padding: 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--blur-border);
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin: 0;
+        }
+
+        .user-message {
+            text-align: right;
+        }
+
+        /* 左对齐系统消息 */
+        .system-message {
+            text-align: left;
+        }
+
+        /* 其他通用样式 */
+        .message .content {
+            display: inline-block;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px;
+        }
+
+        .user-message .content {
+            background-color: #ffffff;
+            /* 用户消息的背景颜色 */
+        }
+
+        /* 欢迎消息的样式 */
+        .welcome-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .welcome-message p {
+            font-size: 2.5em;
+            color: #333;
+        }
+    </style>
+    <script src="/assets/js/highlight.min.js"></script>
+    <script src="/assets/js/highlightjs-copy.min.js"></script>
+    <script>
+        window.conversation_id = `{{chat_id}}`
+    </script>
+
+    <title>CSSGpt</title>
+</head>
+
+<body>
+
+    <div class="gradient"></div>
+    <div class="row">
+
+        <div class="box conversations">
+            <div class="field">
+                <img src="/assets/img/23ai.png" alt="23ai" width="200" height="60" />
+            </div>
+            <div class="title-bar">
+                CSSGPT知识智能问答平台
+            </div>
+            <div>
+                <span class="about">Temperature - </span><span id="temperatureValue">0.9</span>
+                <input type="range" id="Temperature" name="Temperature" min="0" max="1" value="90" step="0.1"
+                    size="10" />
+
+            </div>
+
+            <div class="field">
+                <span class="about">Search&nbsp;&nbsp;&nbsp;  </span>
+                <input type="checkbox" id="switch" />
+                <label for="switch"></label>
+
+            </div>
+            <div class="field">
+
+                <span class="about">RAG开关</span>
+                <input type="checkbox" id="switch_rag" />
+                <label for="switch_rag"></label>
+
+
+
+            </div>
+            <div class="field">
+
+
+                <span class="about">Topk&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <input type="text" id="topn" name="topn" required minlength="1" maxlength="10" size="3" value="3" />
+
+
+            </div>
+            <div class="field">
+                <span class="about">VectorDB</span>
+                <select name="vectordb" id="vectordb">
+                    <option value="default" selected>default</option>
+                    <option value="oracle23ai-exd">oracle23ai-exd</option>
+                </select>
+
+            </div>
+            <div class="top">
+                <button class="new_convo" onclick="new_conversation()">
+                    <i class="fa-regular fa-plus"></i>
+                    <span>创建新的会话</span>
+                </button>
+                <div class="spinner"></div>
+            </div>
+            <div class="bottom_buttons">
+                <button class="new_convo" onclick="delete_conversations()">
+                    <i class="fa-regular fa-trash"></i>
+                    <span>清除历史会话</span>
+                </button>
+
+                <div class="info">
+                    <i class="row"></i>
+
+                    <span class="convo-title">文档检索结果：<br />
+                    </span>
+                </div>
+                <div class="info">
+                    <i class="fa-regular fa-circle-info"></i>
+                    <span class="convo-title">CSS Group<br>
+                        Version: 0.1<br>
+                        Last update: 2024-07-12 <br>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="conversation disable-scrollbars">
+            <div class="stop_generating stop_generating-hidden">
+                <button id="cancelButton">
+                    <span>停止生成</span>
+                    <i class="fa-regular fa-stop"></i>
+                </button>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <div class="field" style="margin-right: 10px;">
+                    <span class="about">Model</span>
+                    <select name="model" id="model">
+                        <option value="gpt-3.5-turbo" selected>gpt-3.5-turbo</option>
+                        <option value="gpt-4o" selected>gpt-4o✨</option>
+                        <option value="moonshot-v1-32k" selected>moonshot-v1-32k✨</option>
+                        <option value="moonshot-v1-128k" selected>moonshot-v1-128k</option>
+                        <option value="llama3:8b" selected>llama3:8b⚡️</option>
+                        <option value="llama3:70b" selected>llama3:70b</option>
+                        <option value="wangshenzhi/llama3-8b-chinese-chat-ollama-q8" selected>
+                            llama3-8b-chinese-chat-ollama-q8⚡️</option>
+                        <option value="phi3:14b" selected>phi3:14b</option>
+                        <option value="command-r" selected>command-r</option>
+                        <option value="gemma:7b" selected>gemma:7b</option>
+                        <option value="gemma:2b" selected>gemma:2b</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <span class="about">Setting⚙️</span>
+                    <select name="jailbreak" id="jailbreak">
+                        <option value="default" selected>default</option>
+                        <option value="gpt-dba-1.0">gpt-dba-1.0</option>
+                        <option value="gpt-dba-rag-1.0">gpt-dba-rag-1.0</option>
+                    </select>
+                </div>
+            </div>
+            <div class="box_main" id="messages">
+            </div>
+            <div class="user-input">
+                <div class="box input-box">
+                    <textarea id="message-input" placeholder="Ask a question" cols="30" rows="10"
+                        style="white-space: pre-wrap;" oninput="resizeTextarea(this)"></textarea>
+                    <div id="send-button">
+                        <i class="fa-regular fa-paper-plane-top"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-sidebar">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="welcome-message" class="welcome-message">
+        <p>💡您好，欢迎您使用初中物化导师平台，您今天想问什么问题呢?</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('Temperature').addEventListener('input', function () {
+                document.getElementById('temperatureValue').textContent = this.value;
+            });
+
+            // 显示欢迎消息
+            const welcomeMessage = document.getElementById('welcome-message');
+            welcomeMessage.style.display = 'block';
+
+            // 隐藏欢迎消息
+            document.addEventListener('click', function () {
+                welcomeMessage.style.display = 'none';
+            }, { once: true });
+        });
+    </script>
+</body>
+
+</html>

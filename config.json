@@ -1,0 +1,78 @@
+{
+    "tavily": {
+        "method": "search",
+        "search_depth": "advanced",
+        "include_domains": "",
+        "exclude_domains": "",
+        "max_results": 5,
+        "max_tokens": 4000,
+        "score": 0.98,
+        "system_message": "\nUse the following pieces of internet search context to answer the question, answer in as much detail and accuracy as possible. Put the source link in context at the end of the answer for download. If you don't know the answer, just say that you don't know.\nQuestion: {question}\nContext: {context}\n{url}"
+    },
+    "kimi_api_base": "https://api.moonshot.cn/v1",
+    "kimi_api_key": "",
+    "kimi_model_list": [
+        "moonshot-v1-32k",
+        "moonshot-v1-8k",
+        "moonshot-v1-128k"
+    ],
+    "hashcode": "b1dcb33364d46159201e",
+    "ollama_base": "",
+    "ollama_model_list": [
+        "mistral-nemo:12b",
+        "llama3:8b-instruct-q6_K"
+    ],
+    "ollama_model_select": [
+        {
+            "mistral-nemo:12b": "mistral-nemo:12b",
+            "gpt-4o":"gpt-4o",
+            "gpt-4o-mini":"gpt-4o-mini",
+            "moonshot-v1-128k": "moonshot-v1-128k"
+        }
+    ],
+    "ollama_options": {
+        "mirostat": 0,
+        "mirostat_eta": 0.1,
+        "mirostat_tau": 5.0,
+        "num_ctx": 2048,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1.1,
+        "temperature": 0.8,
+        "seed": 0,
+        "stop": "",
+        "tfs_z": 1,
+        "num_predict": -1,
+        "top_k": 40,
+        "top_p": 0.9,
+        "min_p": 0.0
+    },
+    "openai_api_base": "",
+    "openai_key": "",
+    "openai_model_list": [
+        "gpt-4o",
+        "gpt-3.5-turbo"
+    ],
+    "proxy": {
+        "enable": true,
+        "http": "127.0.0.1:10809",
+        "https": "127.0.0.1:10809"
+    },
+    "site_config": {
+        "debug": false,
+        "host": "",
+        "port": 6006
+    },
+    "lang": "zh_CN",
+    "system_message": "Today : ",
+    "rag_config": {
+        "rag_instruction_en": "\nUse the context retrieved below to answer the question. Answer in English. The answer must be as detailed and accurate as possible.如果context包含[Exception: 没有搜索到对应的知识]，Answer is：Sorry, I can't answer this question at the moment, I will continue to study hard! \n\nQuestion: {question}\n\nContext: {context}",
+        "rag_instruction_cn": "\n使用以下检索到的内容或者context来回答问题，用中文回答，必须返回全部context的内容，并且要达到尽可能的详细和准确。如果检索到的内容或者context包含 [Exception: 没有搜索到对应的知识]，就必须回答为：抱歉，暂时无法回答这个问题，我会继续努力学习! \n\n问题: {question}\n\n内容: {context}",
+        "chat_hisotry_rounds": 0,
+        "topk": 3,
+        "rerank_topN": 1
+    },
+    "token_check": true,
+    "print_conversation": true,
+    "print_vdb_result": true,
+    "print_search_result": false
+}

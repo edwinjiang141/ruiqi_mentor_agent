@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', 'zh_CN') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges">
+    <meta property="og:title" content="ChatGPT">
+    <meta property="og:image" content="/assets/img/ChatGPT.jpg">
+    <meta property="og:description" content="A conversational AI system that listens, learns, and challenges">
+    <!-- <meta property="og:url" content="https://chat.acy.dev"> -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="manifest" href="/assets/img/site.webmanifest">
+    <script src="/assets/js/icons.js"></script>
+    <script src="/assets/js/chat.js" defer></script>
+    <script src="/assets/js/markdown-it.min.js"></script>
+    <!-- <link rel="stylesheet"
+        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"> -->
+    <link rel="stylesheet" href="/assets/css/github-dark.css">
+    <script>
+        const user_image = `<img src="/assets/img/student.png" alt="User Avatar">`;
+        const gpt_image = `<img src="/assets/img/teacher.png" alt="GPT Avatar">`;
+    </script>
+    <style>
+        /* 隐藏文件输入元素 */
+        #fileElem {
+            display: none;
+        }
+
+        #file-info {
+            color: #333333;
+            /* 设置文字颜色 */
+            font-family: Arial, sans-serif;
+            /* 设置字体 */
+            font-size: 14px;
+            /* 设置字号 */
+            font-weight: normal;
+            /* 设置非粗体 */
+        }
+    </style>
+    <script src="/assets/js/highlight.min.js"></script>
+    <script src="/assets/js/highlightjs-copy.min.js"></script>
+    <script>
+        window.conversation_id = `{{chat_id}}`
+        document.addEventListener('DOMContentLoaded', function () {
+                fetch('/api/config')
+                    .then(response => response.json())
+                    .then(data => {
+                        // 提取 rag_config.topk 的值
+                        const topk = data.rag_config.topk;
+
+                        // 将值设置到 input 元素中
+                        const inputElement = document.getElementById('vdb_topk');
+                        inputElement.value = topk;
+
+                         // 提取 rag_config.topk 的值
+                        const topn = data.rag_config.rerank_topN;
+
+                        // 将值设置到 input 元素中
+                        const inputElement2 = document.getElementById('rank_topn');
+                        inputElement2.value = topn;
+
+                         // 提取 rag_config.topk 的值
+                        const input_score = data.rerank_model.score;
+
+                        // 将值设置到 input 元素中
+                        const inputElement3 = document.getElementById('input_score');
+                        inputElement3.value = input_score;
+                    })
+                    .catch(error => console.error('Error fetching config:', error));
+            });
+    </script>
+    <title>Mentor-Platform</title>
+</head>
+<body>
+    <div class="top-decor-line"></div>
+    <div class="gradient"></div>
+    <div class="row">
+        <div class="box conversations">
+
+            <div class="field">
+                <a class="about" href="http://{{ config_options['site_config']['host'] }}:8889" title="首页"
+                    style="text-decoration: none;">
+                    <img src="/assets/img/mentor.png" alt="Mentor" width="200" height="100" /></a>
+            </div>
+            <div class="title-bar">
+                {{ lang['app-title'] }}
+            </div>
+            <div class="field" >
+                <span class="about">{{ lang['vdbtable'] }}</span>
+                <select class="shortselect"   id="vectordb" title="{{ lang['switchvdb'] }}">
+                    <option value="physics_mentor" selected>导师辅导</option>
+                    <option value="physics_exam">模拟考试</option>
+                    <option value="english_mentor_rent">英语练习--租房</option>
+                </select>
+            </div>
+            <hr class="three-d" style="display:none">
+            <div class="input-container2" style="display:none">
+                🌡️&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="decrement" title="{{ lang['temp-drop'] }}"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" id="Temperature" value="0.3" min="0" max="1" step="0.1" readonly>
+                <button type="button" id="increment" title="{{ lang['temp-increase'] }}"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div class="field" style="display:none">
+                <span class="about">📀</span>
+                <input id="memory" type="range" min="0" max="20" value="0" title="{{ lang['chat-history'] }}">
+                <span id="memoryvalue" class="about">0</span>
+            </div>
+            <!-- <div class="field ">
+                <span class="about">Graph &nbsp;&nbsp;</span>
+                <input type="checkbox" id="graph" />
+                <label for="graph"></label>
+            </div> -->
+            <div class="field">
+                <span class="about" style="display:none">WEB</span>
+                <input type="checkbox" id="switch" checked/>
+                <label for="switch" title="{{ lang['web-search-open'] }}" style="display:none"></label>
+                <span class="about" style="display:none">RAG </span>
+                <input type="checkbox" id="switch_rag" style="display:none"/>
+                <label for="switch_rag" title="{{ lang['rag-open'] }}" style="display:none"></label>
+            </div>
+            <div class="input-container" style="display:none">
+                <span class="about" title="{{ lang['topk'] }}">TopK</span>
+                <button type="button" id="decrement_topk" ><i class="fa-solid fa-minus"></i></button>
+                <input type="number" id="vdb_topk" value="10" min="1" max="1"   >
+                <button type="button" id="increment_topk" ><i class="fa-solid fa-plus"></i></button>
+   
+                 
+            </div>
+            <div class="input-container" style="display:none">
+                <span class="about" title="{{ lang['topn'] }}">TopN </span>
+                <button type="button" id="decrement_topn"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" id="rank_topn" value="3" min="1" max="10"  >
+                <button type="button" id="increment_topn"><i class="fa-solid fa-plus"></i></button>
+            
+            
+            </div>
+            <div class="input-container">
+                
+                <span class="about" title="{{ lang['score'] }}">Score</span>
+                <button type="button" id="decrement_sc"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" id="input_score" value="0.5" min="1" max="1" step="0.1">
+                <button type="button" id="increment_sc"><i class="fa-solid fa-plus"></i></button>
+            
+            
+            </div>
+            
+            <div class="input-container" >
+                <span class="about" title="{{ lang['multi Search'] }}">Decomp</span>
+                <button type="button" id="decrement_search"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" id="search_range" value="0" min="1" max="3" >
+                <button type="button" id="increment_search"><i class="fa-solid fa-plus"></i></button>
+            
+            
+            </div>
+            
+            
+            <hr class="three-d">
+            
+            <div class="field">
+                <button class="new_convo" onclick="new_conversation()" title="{{ lang['newsess'] }}">
+                    <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                    <span>New Chat</span>
+                </button>
+                <button class="new_convo" onclick="delete_conversations()" title="{{ lang['delsess'] }}">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    <span>Clear All</span>
+                </button>
+            </div>
+            <div class="top">
+                <div class="spinner"></div>
+            </div>
+            <div class="bottom_buttons">
+            </div>
+        </div>
+        <div class="conversation disable-scrollbars">
+            <div class="stop_generating stop_generating-hidden">
+                <button id="cancelButton">
+                    <span>{{ lang['stopgenerate'] }}</span>
+                    <i class="fa-regular fa-stop"></i>
+                </button>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <div class="field" style="margin-right: 10px;">
+                    <span class="about toggle-button" id="toggleButton">
+                        <i class="fa fa-chevron-circle-left" aria-hidden="true"></i> </span>
+                    <select name="model" id="model">
+                        {% for key, value in config_options["ollama_model_select"][0].items() %}
+                        <option value="{{ key }}">
+                            {% if value in ["gpt-4o",
+                            "gpt-3.5-turbo","moonshot-v1-32k","moonshot-v1-128k","moonshot-v1-8k"] %}
+                            ☁️{{ value }}
+                            {% else %}
+                            ⚡️{{ value }}
+                            {% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <span id="light-icon" class="theme-icon" style="display: none;">🌜</span>
+                    <span id="dark-icon" class="theme-icon" style="display: none;">🌞</span>
+                    <!-- <a class="about" href="/config" target="_blank" style="text-decoration: none;"
+                        title="{{ lang['configtitle'] }}">&nbsp;⚙️&nbsp;</a> -->
+
+                        <!-- <a class="about" href="#" target="_blank" title="{{ lang['ragloadertitle'] }}" style="text-decoration: none;"
+                        id="languageLink" >&nbsp;📚&nbsp;</a> -->
+                            
+                    <select name="jailbreak" id="jailbreak" style="display: none;">
+                        <option value="default" selected>default</option>
+                        <!-- <option value="gpt-dba-1.0">gpt-dba-1.0</option> -->
+                    </select>
+                    <form id="languageForm" method="get" action="/set_language/"></form>
+                    <select id="languageSelect" name="language_code"
+                        onchange="this.form.action='/set_language/' + this.value; this.form.submit();" style="display:none">
+                        {% for code, name in languages.items() %}
+                        <option value="{{ code }}" {% if code==lang %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    </form>
+                    <a class="about" href="/readme" target="_blank" title="readme" style="text-decoration: none;"><img
+                            src="/assets/img/favicon-32x32.png" alt="User Avatar" style="display:none"></a>
+                </div>
+            </div>
+            <div class="box_main" id="messages">
+            </div>
+            <div class="user-input">
+                <div class="box-foruser-input">
+                    <div class="file-name" style="display:block">
+                        <div id="file-info"></div>
+
+                        <input type="file" id="fileElem"
+                            accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
+                            onchange="handleFiles(this.files)">
+                    </div>
+                    <div class="input-box">
+                        <textarea id="message-input" placeholder="{{ lang['inputplaseholder'] }}" cols="30" rows="10"
+                            style="white-space: pre-wrap;" oninput="resizeTextarea(this)"></textarea>
+                        <div id="send-button">
+                            <i class="fa fa-arrow-circle-up" style="font-size:28px;color:gray"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-sidebar">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+    <div id="welcome-message" class="welcome-message" >
+        <p>{{ lang['welcome-msg'] }}</p>
+        <div class="emoji-container" style="display:none">
+            <div class="emoji-box" id="ragask">
+                <div>⭕</div>
+                <div>{{ lang['welcome-msg-1'] }}</div>
+            </div>
+            <div class="emoji-box" id="generalask">
+                <div>🌍</div>
+                <div>{{ lang['welcome-msg-2'] }}</div>
+            </div>
+            <div class="emoji-box" id="codeanalysis">
+                <div>☕</div>
+                <div>{{ lang['welcome-msg-3'] }}</div>
+            </div>
+            <div class="emoji-box" id="image_exmaple">
+                <div>🖼️</div>
+                <div>{{ lang['welcome-msg-4'] }}</div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var lang = {{ lang | tojson | safe }};
+    </script>
+    <script src="/assets/js/index_basic.js"></script>
+    <script>
+        document.getElementById('languageSelect').addEventListener('change', function () {
+                var selectedLanguage = this.value;
+                var form = document.getElementById('languageForm');
+                form.action = '/set_language/' + selectedLanguage;
+                form.submit();
+            });
+            document.getElementById('languageLink').addEventListener('click', function (event) {
+        // Prevent the default link action
+        event.preventDefault();
+
+        // Get the selected language value from the dropdown
+        const selectedLang = document.getElementById('languageSelect').value;
+
+        // Update the href of the link
+        const link = `http://{{ config_options['site_config']['host'] }}:8501/?lang=${selectedLang}`;
+
+        // Redirect to the updated link
+        window.open(link, '_blank');
+    });
+
+        
+    </script>
+</body>
+</html>

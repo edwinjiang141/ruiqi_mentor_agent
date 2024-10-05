@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Page</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script>
+        async function fetchConfig() {
+            const response = await fetch('/api/config');
+            const config = await response.json();
+            document.getElementById('configContent').value = JSON.stringify(config, null, 4);
+        }
+
+        async function saveConfig() {
+            const updatedConfig = document.getElementById('configContent').value;
+
+            // 弹出询问框要求用户输入密钥
+            const key = prompt('Please enter the key:');
+            if (key !== 'css715') {
+                alert('Incorrect key. Configuration not saved.');
+                return;
+            }
+
+            try {
+                // 验证JSON格式是否正确
+                JSON.parse(updatedConfig);
+
+                await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: updatedConfig,
+                });
+                alert('Configuration saved successfully!');
+            } catch (error) {
+                alert('Invalid JSON format: ' + error.message);
+            }
+        }
+
+        window.onload = fetchConfig;
+    </script>
+    <style>
+        .config-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 1px solid white;
+            border-radius: var(--border-radius-1);
+            background-color: var(--blur-bg);
+            cursor: pointer;
+        }
+
+        .config-container button:hover {
+            background-color: var(--colour-5);
+        }
+
+        .config-container button:focus {
+            border-color: red;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="config-container">
+        <h1>Configuration Page</h1>
+        <textarea id="configContent" rows="30" cols="100"></textarea>
+        <br>
+        <button onclick="saveConfig()">Save Configuration</button>
+    </div>
+</body>
+
+</html>

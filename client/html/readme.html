@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readme Page</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script>
+         async function fetchReadme() {
+                const response = await fetch('/api/readme');
+                const text = await response.text();
+                
+                document.getElementById('ReadmeContent').value =   text; 
+            }
+         window.onload = fetchReadme;
+    </script>
+    <style>
+        .config-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 1px solid white;
+            border-radius: var(--border-radius-1);
+            background-color: var(--blur-bg);
+            cursor: pointer;
+        }
+
+        .config-container button:hover {
+            background-color: var(--colour-5);
+        }
+
+        .config-container button:focus {
+            border-color: red;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="config-container">
+        <h1>README</h1>
+        <textarea id="ReadmeContent" rows="30" cols="100"></textarea>
+        <br>
+        
+    </div>
+</body>
+
+</html>
