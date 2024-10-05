@@ -121,28 +121,8 @@ class Backend_Api:
                 response = agents.chat_with_history(inputmessage)
                 def stream():
                     for chunk in response.content:
-                        # chunk_message = chunk.choices[0].delta
-                        # if not chunk_message.content:
-                        #     continue
-                        # # print(chunk_message.content)
                         yield chunk
                 return self.app.response_class(stream(), mimetype="text/event-stream")
-                # system_prompt = agents.load_prompt()
-                # messages = [
-                #                 {"role": "system", "content": system_prompt},
-                #                 {"role": "user", "content": inputmessage},
-                #             ]
-                # ollama_stream = ollama.chat(
-                #             model=choosedmodel,
-                #             # messages=[{'role': 'user', 'content': prompt["content"]}],
-                #             messages=messages,
-                #             stream=True,
-                #             options={"max_tokens": 10000,"temperature": 0, "num_predict": self.num_predict},
-                #         )
-                # def stream():
-                #     for chunk in ollama_stream:
-                #         yield chunk["message"]["content"]
-                # return self.app.response_class(stream(), mimetype="text/event-stream") 
             elif choosedmodel in self.kimi_modellist:
                 client = OpenAI(
                     api_key=os.getenv("KIMI_API_KEY"),
@@ -165,10 +145,6 @@ class Backend_Api:
                 response = agents.chat_with_history(inputmessage)
                 def stream():
                     for chunk in response.content:
-                        # chunk_message = chunk.choices[0].delta
-                        # if not chunk_message.content:
-                        #     continue
-                        # # print(chunk_message.content)
                         yield chunk
                 return self.app.response_class(stream(), mimetype="text/event-stream")
             else:
@@ -178,33 +154,10 @@ class Backend_Api:
                 response = agents.chat_with_history(inputmessage)
                 def stream():
                     for chunk in response.content:
-                        # chunk_message = chunk.choices[0].delta
-                        # if not chunk_message.content:
-                        #     continue
-                        # # print(chunk_message.content)
                         yield chunk   
 
                 return self.app.response_class(stream(), mimetype="text/event-stream")
-                # system_prompt = agents.load_prompt()
-                # messages = [
-                #                 {"role": "system", "content": system_prompt},
-                #                 {"role": "user", "content": inputmessage},
-                #             ]
-                # client = OpenAI(api_key = self.openai_key,base_url = "https://pro.aiskt.com/v1/")
-                # n_temp = float(0)
-                # response = client.chat.completions.create(
-                #     model=choosedmodel,
-                #     messages=messages,
-                #     stream=True
-                # )
-                # def stream():
-                #     for chunk in response:
-                #         chunk_message = chunk.choices[0].delta
-                #         if not chunk_message.content:
-                #             continue
-                #         # print(chunk_message.content)
-                #         yield chunk_message.content
-                # return self.app.response_class(stream(), mimetype="text/event-stream")
+
             
         except Exception as e:
             self.app.logger.debug(e)
