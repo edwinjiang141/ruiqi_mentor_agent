@@ -119,9 +119,18 @@ class Backend_Api:
                 #         }
                 agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
                 response = agents.chat_with_history(inputmessage)
+                import time
+
+                def string_generator(long_string, chunk_size=10):
+                    return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                
                 def stream():
-                    for chunk in response.content:
+                    # for chunk in response.content:
+                    #     yield chunk
+                    for chunk in string_generator(response.content):
                         yield chunk
+                        time.sleep(0.2)  # 模拟流式输出的延迟
+
                 return self.app.response_class(stream(), mimetype="text/event-stream")
             elif choosedmodel in self.kimi_modellist:
                 client = OpenAI(
@@ -143,18 +152,34 @@ class Backend_Api:
                 # )
                 #agents.start_new_session()
                 response = agents.chat_with_history(inputmessage)
+                import time
+
+                def string_generator(long_string, chunk_size=10):
+                    return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                
                 def stream():
-                    for chunk in response.content:
+                    # for chunk in response.content:
+                    #     yield chunk
+                    for chunk in string_generator(response.content):
                         yield chunk
+                        time.sleep(0.2)  # 模拟流式输出的延迟
                 return self.app.response_class(stream(), mimetype="text/event-stream")
             else:
                 # 访问OpenAI API
                 self.app.logger.debug("Chatgpt llm .........................")
                 agents = ScenarioAgent('openai',mentor_agent,choosedmodel,conversation_id)
                 response = agents.chat_with_history(inputmessage)
+                import time
+
+                def string_generator(long_string, chunk_size=10):
+                    return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                
                 def stream():
-                    for chunk in response.content:
-                        yield chunk   
+                    # for chunk in response.content:
+                    #     yield chunk
+                    for chunk in string_generator(response.content):
+                        yield chunk
+                        time.sleep(0.2)  # 模拟流式输出的延迟
 
                 return self.app.response_class(stream(), mimetype="text/event-stream")
 
