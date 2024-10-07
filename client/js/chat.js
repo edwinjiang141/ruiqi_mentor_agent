@@ -103,89 +103,41 @@ const ask_gpt = async (message) => {
 
     stop_generating.classList.remove(`stop_generating-hidden`);
 
+    // Adding user's message
     message_box.innerHTML += `
             <div class="message user-message" style="text-align: left">
-             
                 <div class="user">
                     ${user_image}
-                    
                 </div>
-                <div class="content" id="user_${token}"> 
+                <div class="content" id="user_${window.token}">
                     ${format(message)}
                 </div>
             </div>
         `;
 
     message_box.scrollTop = message_box.scrollHeight;
-    window.scrollTo(0, 0);
     await new Promise((r) => setTimeout(r, 500));
-    window.scrollTo(0, 0);
 
+    // Adding AI's message placeholder
     message_box.innerHTML += `
             <div class="message system-message">
-                
                 <div class="user">
                     ${gpt_image}  
                 </div>
                 <div class="content" id="gpt_${window.token}">
                     <div id="cursor"></div>
-                    
                 </div>
-                
             </div>
-            
         `;
-        //<i id="refresh" class="fa fa-refresh icon-gray" aria-hidden="true" onclick="showmsg('user_${token}', '${format(message)}')"></i>
 
     message_box.scrollTop = message_box.scrollHeight;
-    window.scrollTo(0, 0);
     await new Promise((r) => setTimeout(r, 1000));
-    window.scrollTo(0, 0);
-
-    // const response = await fetch(`/backend-api/v2/conversation`, {
-    //   method: `POST`,
-    //   signal: window.controller.signal,
-    //   headers: {
-    //     "content-type": `application/json`,
-    //     accept: `text/event-stream`,
-    //   },
-    //   body: JSON.stringify({
-    //     conversation_id: window.conversation_id,
-    //     action: `_ask`,
-    //     model: model.options[model.selectedIndex].value,
-    //     jailbreak: jailbreak.options[jailbreak.selectedIndex].value,
-    //     meta: {
-    //       id: window.token,
-    //       content: {
-    //         conversation: await get_conversation(window.conversation_id),
-    //         internet_access: document.getElementById("switch").checked,
-    //         rag_access: document.getElementById("switch_rag").checked,
-    //         temperature: document.getElementById("Temperature").value,
-    //         content_type: "text",
-    //         parts: [
-    //           {
-    //             content: message,
-    //             role: "user",
-    //           },
-    //         ],
-    //       },
-    //     },
-    //   }),
-    // });
 
     const formData = new FormData();
     formData.append('conversation_id', window.conversation_id);
     formData.append('action', '_ask');
     formData.append('model', model.options[model.selectedIndex].value);
     formData.append('jailbreak', jailbreak.options[jailbreak.selectedIndex].value);
-
-    // console.log("---------con id----------------------------------")
-
-    // console.log(window.conversation_id)
-    // console.log("-----------get_conversation--------------------------------")
-
-    // console.log(get_conversation(window.conversation_id))
-    // console.log("------------get_conversation end-------------------------------")
 
     const metaContent = {
       id: window.token,
@@ -202,37 +154,29 @@ const ask_gpt = async (message) => {
         memory: document.getElementById("memory").value,
         languageSelect: document.getElementById("languageSelect").value,
         mentor_agent: document.getElementById("vectordb").value,
-        cssgptinvoke:true,
+        cssgptinvoke: true,
         content_type: "text",
         parts: [
           {
-            content:   message,
+            content: message,
             role: "user",
           },
         ],
       },
+      request_image: true // 新增标志，明确请求需要图片内容
     };
 
     formData.append('meta', JSON.stringify(metaContent));
     formData.append('upload_file', file);
 
-    // console.log("-------------------------------------------")
-    // console.log(window.controller.signal)
-    // console.log("-------------------------------------------")
-    // console.log(formData)
-
-    // console.log("-------------------------------------------")
-
     const response = await fetch(`/backend-api/v2/conversation`, {
       method: `POST`,
       signal: window.controller.signal,
-      // 不需要显式设置 content-type 头，浏览器会自动为 FormData 设置合适的内容类型
       headers: {
         accept: `text/event-stream`,
       },
       body: formData,
     });
-    console.log(response)
 
     file = null;
 
@@ -240,178 +184,80 @@ const ask_gpt = async (message) => {
     let text = ``;
     let isImage = false;
     let imageUrl = '';
-    let chunks = '';
 
-//     while (true) {
-//       const { value, done } = await reader.read();
-//       if (done) break;
+    let i = 1;
 
-//       let chunk = new TextDecoder().decode(value);
-//       chunks += chunk;
-//     }
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (!value) continue;
 
-//     console.log(chunks);
+      let chunk = new TextDecoder().decode(value);
+      text += chunk;
 
-//     try {
-//       const jsonChunks = JSON.parse(chunks);
-//       if (jsonChunks.image_data && jsonChunks.image_data.startsWith('data:image')) {
-//         isImage = true;
-//         imageUrl = jsonChunks.image_data;
-//       } else {
-//         text += chunks;
-//       }
-//     } catch (e) {
-//       text += chunks;
-//     }
+      if (i === 1) {
+        if (chunk.includes('data:image')) {
+          isImage = true;
+          imageUrl = text; // 收集完整的 data URI
+        } else if (chunk.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i)) {
+          isImage = true;
+          imageUrl = chunk.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i)[0];
+        }
+        console.log("isImage:" + isImage);
+      }
 
-//     console.log("isImage: " + isImage);
+      if (!isImage) {
+        if (chunk.includes("无法直接提供图片") || chunk.includes("cannot provide image")) {
+          isImage = false;
+          text += chunk;
+          document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
+          continue;
+        }
+        document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
+        document.querySelectorAll(`code`).forEach((el) => {
+          hljs.highlightElement(el);
+        });
+      } else if (done) {
+        // 在数据流完全接收后再显示图片
+        if (imageUrl) {
+          document.getElementById(`gpt_${window.token}`).innerHTML = `<img src="${imageUrl}" alt="Generated Image"/>`;
+        }
+      }
+      message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
 
-//     if (isImage) {
-//       document.getElementById(`gpt_${window.token}`).innerHTML = `<img src="${imageUrl}" alt="Generated Image" />`;
-//     } else {
-//       document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
-//       document.querySelectorAll(`code`).forEach((el) => {
-//         hljs.highlightElement(el);
-//       });
-//     }
-
-//     window.scrollTo(0, 0);
-//     message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
-
-//     if (text.includes(`instead. Maintaining this website and API costs a lot of money`)) {
-//       document.getElementById(`gpt_${window.token}`).innerHTML = "An error occured, please reload / refresh cache and try again.";
-//     }
-
-//     add_message(window.conversation_id, "user", message);
-//     add_message(window.conversation_id, "assistant", text);
-
-//     message_box.scrollTop = message_box.scrollHeight;
-//     await remove_cancel_button();
-//     prompt_lock = false;
-
-//     await load_conversations(20, 0);
-//     window.scrollTo(0, 0);
-//   } catch (e) {
-//     add_message(window.conversation_id, "user", message);
-
-//     message_box.scrollTop = message_box.scrollHeight;
-//     await remove_cancel_button();
-//     prompt_lock = false;
-
-//     await load_conversations(20, 0);
-
-//     console.log(e);
-
-//     let cursorDiv = document.getElementById(`cursor`);
-//     if (cursorDiv) cursorDiv.parentNode.removeChild(cursorDiv);
-
-//     if (e.name != `AbortError`) {
-//       let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
-
-//       document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
-//       add_message(window.conversation_id, "assistant", error_message);
-//     } else {
-//       document.getElementById(`gpt_${window.token}`).innerHTML += ` [aborted]`;
-//       add_message(window.conversation_id, "assistant", text + ` [aborted]`);
-//     }
-
-//     window.scrollTo(0, 0);
-//   }
-// };
-
-  let i = 1;
-  
-
-while (true) {
-  const { value, done } = await reader.read();
-  if (done) break;
-
-    
-  
-
-  let chunk = new TextDecoder().decode(value);
-  text += chunk;
-
-  if (i == 1   ){
-    if (chunk.includes('data:image')){
-      isImage = true
-
+      i++;
     }
-    console.log("isImage:" + isImage)
 
-    
+    add_message(window.conversation_id, "user", message);
+    add_message(window.conversation_id, "assistant", text);
 
-  } 
-  if (!isImage){
-    document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
-    document.querySelectorAll(`code`).forEach((el) => {
-      hljs.highlightElement(el);
-    });
+    message_box.scrollTop = message_box.scrollHeight;
+    await remove_cancel_button();
+    prompt_lock = false;
+
+    await load_conversations(20, 0);
+  } catch (e) {
+    add_message(window.conversation_id, "user", message);
+    message_box.scrollTop = message_box.scrollHeight;
+    await remove_cancel_button();
+    prompt_lock = false;
+    await load_conversations(20, 0);
+    console.log(e);
+    let cursorDiv = document.getElementById(`cursor`);
+    if (cursorDiv) cursorDiv.parentNode.removeChild(cursorDiv);
+
+    if (e.name !== `AbortError`) {
+      let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
+      document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
+      add_message(window.conversation_id, "assistant", error_message);
+    } else {
+      document.getElementById(`gpt_${window.token}`).innerHTML += ` [aborted]`;
+      add_message(window.conversation_id, "assistant", text + ` [aborted]`);
+    }
 
     window.scrollTo(0, 0);
-    message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
-
   }
-  i++
-
-}
-
-    
-
-if (isImage) {
-  const jsonChunks = JSON.parse(text);
-  imageUrl = jsonChunks.image_data;
-  
-  document.getElementById(`gpt_${window.token}`).innerHTML = `<img src="${imageUrl}" alt="Generated Image"/>`;
-  add_message(window.conversation_id, "user", message);
-  add_message(window.conversation_id, "assistant", message);
-    }else{
-  if (text.includes(`instead. Maintaining this website and API costs a lot of money`)) {
-    document.getElementById(`gpt_${window.token}`).innerHTML = "An error occured, please reload / refresh cache and try again.";
-  }
-  add_message(window.conversation_id, "user", message);
-  add_message(window.conversation_id, "assistant", text);
-
-    }
-
-
-
-
-
-message_box.scrollTop = message_box.scrollHeight;
-await remove_cancel_button();
-prompt_lock = false;
-
-await load_conversations(20, 0);
-window.scrollTo(0, 0);
-  } catch (e) {
-  add_message(window.conversation_id, "user", message);
-
-  message_box.scrollTop = message_box.scrollHeight;
-  await remove_cancel_button();
-  prompt_lock = false;
-
-  await load_conversations(20, 0);
-
-  console.log(e);
-
-  let cursorDiv = document.getElementById(`cursor`);
-  if (cursorDiv) cursorDiv.parentNode.removeChild(cursorDiv);
-
-  if (e.name != `AbortError`) {
-    let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
-
-    document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
-    add_message(window.conversation_id, "assistant", error_message);
-  } else {
-    document.getElementById(`gpt_${window.token}`).innerHTML += ` [aborted]`;
-    add_message(window.conversation_id, "assistant", text + ` [aborted]`);
-  }
-
-  window.scrollTo(0, 0);
-}
 };
-
 
 
 
