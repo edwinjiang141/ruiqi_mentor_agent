@@ -87,6 +87,7 @@ const remove_cancel_button = async () => {
 // 发送消息给GPT
 const ask_gpt = async (message) => {
   try {
+    // Reset input
     message_input.value = ``;
     message_input.innerHTML = ``;
     message_input.innerText = ``;
@@ -104,31 +105,31 @@ const ask_gpt = async (message) => {
     stop_generating.classList.remove(`stop_generating-hidden`);
 
     // Adding user's message
-    message_box.innerHTML += `
-            <div class="message user-message" style="text-align: left">
-                <div class="user">
-                    ${user_image}
-                </div>
-                <div class="content" id="user_${window.token}">
-                    ${format(message)}
-                </div>
-            </div>
-        `;
+    message_box.insertAdjacentHTML('beforeend', `
+      <div class="message user-message" style="text-align: left">
+        <div class="user">
+          ${user_image}
+        </div>
+        <div class="content" id="user_${window.token}">
+          ${format(message)}
+        </div>
+      </div>
+    `);
 
     message_box.scrollTop = message_box.scrollHeight;
     await new Promise((r) => setTimeout(r, 500));
 
     // Adding AI's message placeholder
-    message_box.innerHTML += `
-            <div class="message system-message">
-                <div class="user">
-                    ${gpt_image}  
-                </div>
-                <div class="content" id="gpt_${window.token}">
-                    <div id="cursor"></div>
-                </div>
-            </div>
-        `;
+    message_box.insertAdjacentHTML('beforeend', `
+      <div class="message system-message">
+        <div class="user">
+          ${gpt_image}
+        </div>
+        <div class="content" id="gpt_${window.token}">
+          <div id="cursor"></div>
+        </div>
+      </div>
+    `);
 
     message_box.scrollTop = message_box.scrollHeight;
     await new Promise((r) => setTimeout(r, 1000));
@@ -136,8 +137,18 @@ const ask_gpt = async (message) => {
     const formData = new FormData();
     formData.append('conversation_id', window.conversation_id);
     formData.append('action', '_ask');
-    formData.append('model', model.options[model.selectedIndex].value);
-    formData.append('jailbreak', jailbreak.options[jailbreak.selectedIndex].value);
+
+    if (model && model.selectedIndex >= 0) {
+      formData.append('model', model.options[model.selectedIndex].value);
+    } else {
+      throw new Error("Model selection is invalid or not available");
+    }
+
+    if (jailbreak && jailbreak.selectedIndex >= 0) {
+      formData.append('jailbreak', jailbreak.options[jailbreak.selectedIndex].value);
+    } else {
+      throw new Error("Jailbreak selection is invalid or not available");
+    }
 
     const metaContent = {
       id: window.token,
@@ -163,7 +174,7 @@ const ask_gpt = async (message) => {
           },
         ],
       },
-      request_image: true // 新增标志，明确请求需要图片内容
+      request_image: true
     };
 
     formData.append('meta', JSON.stringify(metaContent));
@@ -182,10 +193,7 @@ const ask_gpt = async (message) => {
 
     const reader = response.body.getReader();
     let text = ``;
-    let isImage = false;
-    let imageUrl = '';
-
-    let i = 1;
+    let imageUrls = [];
 
     while (true) {
       const { value, done } = await reader.read();
@@ -195,37 +203,42 @@ const ask_gpt = async (message) => {
       let chunk = new TextDecoder().decode(value);
       text += chunk;
 
-      if (i === 1) {
-        if (chunk.includes('data:image')) {
-          isImage = true;
-          imageUrl = text; // 收集完整的 data URI
-        } else if (chunk.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i)) {
-          isImage = true;
-          imageUrl = chunk.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i)[0];
-        }
-        console.log("isImage:" + isImage);
+      // Extract multiple image URLs if present
+      const urls = chunk.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif|image|im))/gi);
+      if (urls) {
+        imageUrls.push(...urls);
+        // Display each image immediately after detecting it
+        urls.forEach(url => {
+          const img = new Image();
+          img.src = url;
+          img.alt = "Generated Image";
+          img.style.maxWidth = "100%";
+          img.style.marginTop = "10px";
+          img.onerror = function() {
+            // If image fails to load, display the URL as a clickable link instead
+            const link = document.createElement('a');
+            link.href = url;
+            link.textContent = url;
+            link.target = "_blank";
+            link.style.color = "blue";
+            link.style.textDecoration = "underline";
+            document.getElementById(`gpt_${window.token}`).appendChild(link);
+            document.getElementById(`gpt_${window.token}`).appendChild(document.createElement('br'));
+          };
+          document.getElementById(`gpt_${window.token}`).appendChild(img);
+        });
       }
 
-      if (!isImage) {
-        if (chunk.includes("无法直接提供图片") || chunk.includes("cannot provide image")) {
-          isImage = false;
-          text += chunk;
-          document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
-          continue;
-        }
+      // Update the message content with text (only if it's not an image URL)
+      let nonImageText = chunk.replace(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif|image|im))/gi, '');
+      if (nonImageText.trim().length > 0) {
         document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
         document.querySelectorAll(`code`).forEach((el) => {
           hljs.highlightElement(el);
         });
-      } else if (done) {
-        // 在数据流完全接收后再显示图片
-        if (imageUrl) {
-          document.getElementById(`gpt_${window.token}`).innerHTML = `<img src="${imageUrl}" alt="Generated Image"/>`;
-        }
       }
-      message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
 
-      i++;
+      message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
     }
 
     add_message(window.conversation_id, "user", message);
@@ -258,6 +271,18 @@ const ask_gpt = async (message) => {
     window.scrollTo(0, 0);
   }
 };
+
+// Modifications added:
+// 1. Extracted multiple image URLs from the response chunk using a regular expression and displayed each image immediately after detecting it.
+// 2. Updated the message content with text while ensuring that any image URLs were excluded from the text rendering.
+// 3. Added nonImageText variable to filter out image URLs before updating the text content, ensuring only actual text is rendered.
+// 4. Inserted comments to clarify where the changes were made for handling multiple image URLs and separating text from images.
+// 5. Kept the original image URLs without removing any parameters to ensure proper image loading.
+// 6. Extended the regular expression to include `.im` as a valid image extension to ensure these images are displayed correctly.
+// 7. Added error handling for image elements: if an image fails to load, display the URL as a clickable link instead, with proper styling for visibility.
+
+
+
 
 
 

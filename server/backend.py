@@ -152,14 +152,23 @@ class Backend_Api:
                 # )
                 #agents.start_new_session()
                 response = agents.chat_with_history(inputmessage)
+                
+                # Step 1. Instantiating your TavilyClient
+                # from tavily import TavilyClient
+                # client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+
+                # # Step 2. Executing a simple search query
+                # web_response = client.search(inputmessage,include_images=True)
+
+                # # Step 3. That's it! You've done a Tavily Search!
+                # print(web_response['images'][1])
+                #response = response+web_result
                 import time
 
                 def string_generator(long_string, chunk_size=10):
                     return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
                 
                 def stream():
-                    # for chunk in response.content:
-                    #     yield chunk
                     for chunk in string_generator(response.content):
                         yield chunk
                         time.sleep(0.2)  # 模拟流式输出的延迟

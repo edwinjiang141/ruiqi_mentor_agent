@@ -1,16 +1,22 @@
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-import sys
+import os
 
 class tavily_search:
-    def __init__(self,llm_model: any = None,query: str = None,languageSelect: str = None):
+    def __init__(self,llm_model: any = None,query: str = None,model_type: str = None):
         self.llm_model = llm_model
         self.query = query
-        self.languageSelect = languageSelect
-
+        self.model_type = model_type
+        if self.model_type == 'openai':
+            self.chatbot =  ChatOpenAI(model=self.llm_model, temperature=0,openai_api_base = os.getenv("OPENAI_API_BASE"),streaming=True)
+        elif self.model_type == 'kimi':
+            self.chatbot = ChatOpenAI(model=self.llm_model, temperature=0,api_key=os.getenv("KIMI_API_KEY"),openai_api_base = os.getenv("KIMI_API_BASE"),streaming=True)
+        else:
+            self.chatbot = ChatOllama(model=self.llm_model,max_tokens=8192, temperature=0.8)
 
     def web_search(self):
         try:
@@ -20,27 +26,27 @@ class tavily_search:
             #                 Question: {question}
             #                 """)
             doc_search_prompt =ChatPromptTemplate.from_template("""
-                            languageSelect: 用相应的{languageSelect}来回答
-                            在答案后增加这句话: 目前知识库搜搜不到改问题合理的解释，以上答案是从Oracle 的 https://docs.oracle.com or https://blogs.oracle.com 搜索得到，请参考。
                             Question: {question}
                             """)
-            llm = ChatOllama(
-                model=self.llm_model,
-                temperature=0,
-            )
+            # llm = ChatOllama(
+            #     model=self.llm_model,
+            #     temperature=0,
+            # )
             # 将生成的查询传递给最终答案的提交工具
+            
+
+            chain = (
+                RunnablePassthrough.assign(context=(lambda x: x["question"]) | tavily_tool)
+                | doc_search_prompt
+                | self.chatbot
+                | StrOutputParser()
+            )
             # chain = (
-            #     RunnablePassthrough.assign(context=(lambda x: x["question"]) | tavily_tool)
-            #     | doc_search_prompt
+            #     doc_search_prompt
             #     | llm
             #     | StrOutputParser()
             # )
-            chain = (
-                doc_search_prompt
-                | llm
-                | StrOutputParser()
-            )
-            response = chain.stream({"languageSelect":self.languageSelect,"question": self.query})
+            response = chain.stream({"question": self.query})
             # for chunk in response:
             #     # 输出逐步生成的文本块
             #     sys.stdout.write(chunk)

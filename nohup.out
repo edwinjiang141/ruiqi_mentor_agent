@@ -1,0 +1,12 @@
+26671:C 07 Oct 2024 22:05:18.972 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+26671:C 07 Oct 2024 22:05:18.972 # Redis version=6.0.16, bits=64, commit=00000000, modified=0, pid=26671, just started
+26671:C 07 Oct 2024 22:05:18.972 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+26671:M 07 Oct 2024 22:05:18.972 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+26671:M 07 Oct 2024 22:05:18.973 * Running mode=standalone, port=6379.
+26671:M 07 Oct 2024 22:05:18.973 # Server initialized
+26671:M 07 Oct 2024 22:05:18.973 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+26671:M 07 Oct 2024 22:05:18.974 * Ready to accept connections
+26671:M 07 Oct 2024 22:05:59.096 # User requested shutdown...
+26671:M 07 Oct 2024 22:05:59.096 * Saving the final RDB snapshot before exiting.
+26671:M 07 Oct 2024 22:05:59.096 * DB saved on disk
+26671:M 07 Oct 2024 22:05:59.096 # Redis is now ready to exit, bye bye...
