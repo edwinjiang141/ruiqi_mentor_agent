@@ -178,6 +178,7 @@ class Backend_Api:
                 self.app.logger.debug("Chatgpt llm .........................")
                 agents = ScenarioAgent('openai',mentor_agent,choosedmodel,conversation_id)
                 response = agents.chat_with_history(inputmessage)
+                print(response.content)
                 import time
 
                 def string_generator(long_string, chunk_size=10):
