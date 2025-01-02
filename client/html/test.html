@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-file Upload</title>
+    <style>
+        .file-name {
+            margin-bottom: 20px;
+        }
+        .file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .file-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-name" style="display:block">
+        <div id="file-info">
+            <ul id="file-list" class="file-list"></ul>
+        </div>
+
+        <input type="file" id="fileElem" multiple
+            accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
+            onchange="handleFiles(this.files)">
+    </div>
+
+    <script>
+        function handleFiles(files) {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = ''; // Clear the list for new selections
+
+            Array.from(files).forEach(file => {
+                const fileType = getFileTypeIcon(file);
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `${fileType} ${file.name}`;
+                fileList.appendChild(listItem);
+            });
+        }
+
+        function getFileTypeIcon(file) {
+            let fileType;
+            if (file.type.startsWith('text') || file.name.endsWith('.log')) {
+                if (file.type.includes('python')) {
+                    fileType = '🐍';
+                } else if (file.type.includes('javascript') || file.type.includes('html') || file.type.includes('css')) {
+                    fileType = '📜';
+                } else if (file.type.includes('java')) {
+                    fileType = '☕';
+                } else {
+                    fileType = '📄';
+                }
+            } else if (file.type.startsWith('image')) {
+                fileType = '🖼️';
+            } else if (file.name.endsWith('.pdf')) {
+                fileType = '📙';
+            } else if (file.name.endsWith('.docx')) {
+                fileType = '📘';
+            } else {
+                fileType = '❓';
+            }
+            return fileType;
+        }
+    </script>
+</body>
+</html>

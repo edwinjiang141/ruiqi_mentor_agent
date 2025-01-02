@@ -28,22 +28,69 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 处理文件
+    // function handleFiles(files) {
+    //     file = files[0];
+    //     document.body.classList.remove('highlight');
+    //     displayFileInfo(file);
+        
+    // }
+
+    // // 显示文件信息
+    // function displayFileInfo(file) {
+    //     const fileInfo = document.getElementById('file-info');
+    //     //const filePrompt = document.getElementById('file-prompt');
+    //     //const fileLabel = document.getElementById('file-label');
+    //     //filePrompt.classList.add('hidden');
+    //     //fileLabel.classList.add('hidden');
+
+    //     let fileType;
+    //     console.log(file.type)
+    //     if (file.type.startsWith('text') || file.name.endsWith('.log')) {
+    //         if (file.type.includes('python')) {
+    //             fileType = '🐍';
+    //         } else if (file.type.includes('javascript') || file.type.includes('html') || file.type.includes('css')) {
+    //             fileType = '📜';
+    //         } else if (file.type.includes('java')) {
+    //             fileType = '☕';
+    //         } else {
+    //             fileType = '📄';
+
+    //         }
+
+
+    //     } else if (file.type.startsWith('image')) {
+    //         fileType = '🖼️';
+    //     } else if (file.name.endsWith('.pdf')) {
+    //         fileType = '📙';
+    //     } else if (file.name.endsWith('.docx')) {
+    //         fileType = '📘';
+    //     } else {
+    //         fileType = '❓';
+    //     }
+    //     fileInfo.innerHTML = `${fileType} ${file.name}`;
+    // }
+
+
+    const uploadedFiles = []; // Array to store all uploaded files
+
     function handleFiles(files) {
-        file = files[0];
-        document.body.classList.remove('highlight');
-        displayFileInfo(file);
+        const fileList = document.getElementById('file-list');
+
+        Array.from(files).forEach(file => {
+            uploadedFiles.push(file); // Add file to the global array
+
+            const fileType = getFileTypeIcon(file);1
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${fileType} ${file.name}`;
+            fileList.appendChild(listItem);
+        });
+
+        file = uploadedFiles
+        console.log("Uploaded files array:", uploadedFiles);
     }
 
-    // 显示文件信息
-    function displayFileInfo(file) {
-        const fileInfo = document.getElementById('file-info');
-        //const filePrompt = document.getElementById('file-prompt');
-        //const fileLabel = document.getElementById('file-label');
-        //filePrompt.classList.add('hidden');
-        //fileLabel.classList.add('hidden');
-
+    function getFileTypeIcon(file) {
         let fileType;
-        console.log(file.type)
         if (file.type.startsWith('text') || file.name.endsWith('.log')) {
             if (file.type.includes('python')) {
                 fileType = '🐍';
@@ -53,10 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 fileType = '☕';
             } else {
                 fileType = '📄';
-
             }
-
-
         } else if (file.type.startsWith('image')) {
             fileType = '🖼️';
         } else if (file.name.endsWith('.pdf')) {
@@ -66,8 +110,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             fileType = '❓';
         }
-        fileInfo.innerHTML = `${fileType} ${file.name}`;
+        return fileType;
     }
+    
 
     // 重置页面
     function resetPage() {
@@ -92,7 +137,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('dragleave', unhighlight, false);
     document.addEventListener('drop', unhighlight, false);
 
-    document.addEventListener('drop', handleDrop, false);
+
+    document.addEventListener('drop', (e) => {
+        handleDrop(e);
+    }, false)
+
+    //document.addEventListener('drop', handleDrop, false);
 
     const CUSTOM_KEYWORDS = [
         'tablespace', 'extend'];

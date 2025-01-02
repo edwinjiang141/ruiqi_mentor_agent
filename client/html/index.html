@@ -98,7 +98,8 @@
                     <option value="chemistry_exam">化学模拟考试</option>
                     <option value="english_mentor_rent">英语练习--租房</option>
                     <option value="english_mentor_word">英语练习--单词</option>
-                    <option value="mentor_olympic_maths">奥数--数学</option>
+                    <option value="code_generate">生成代码</option>
+                    <!-- <option value="mentor_olympic_maths">奥数--数学</option> -->
                 </select>
             </div>
             <hr class="three-d" style="display:none">
@@ -233,9 +234,11 @@
             <div class="user-input">
                 <div class="box-foruser-input">
                     <div class="file-name" style="display:block">
-                        <div id="file-info"></div>
+                        <div id="file-info">
+                            <ul id="file-list" class="file-list"></ul>
+                        </div>
 
-                        <input type="file" id="fileElem"
+                        <input type="file" id="fileElem" multiple
                             accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
                             onchange="handleFiles(this.files)">
                     </div>

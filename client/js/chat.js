@@ -178,7 +178,17 @@ const ask_gpt = async (message) => {
     };
 
     formData.append('meta', JSON.stringify(metaContent));
-    formData.append('upload_file', file);
+    //console.log("files array:",file)
+    if(file){
+      if (file.length > 0) {
+        for (let i = 0; i < file.length; i++) {
+            formData.append("upload_file", file[i]);
+        }
+      } else {
+          console.log("No files selected.");
+      }
+    }  
+    //formData.append('upload_file', file)
 
     const response = await fetch(`/backend-api/v2/conversation`, {
       method: `POST`,
