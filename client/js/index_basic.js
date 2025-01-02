@@ -69,25 +69,33 @@ document.addEventListener('DOMContentLoaded', function () {
     //     }
     //     fileInfo.innerHTML = `${fileType} ${file.name}`;
     // }
-
+    // function resetFileInput() {
+    //     const fileInput = document.getElementById('file-info2');
+    //     console.log("fileInput:", fileInput.value );
+    //     if (fileInput) {
+    //         fileInput.value = ""; // Reset the file input value
+    //     }
+    // }
 
     const uploadedFiles = []; // Array to store all uploaded files
 
     function handleFiles(files) {
-        const fileList = document.getElementById('file-list');
+        const fileList = document.getElementById('file-info');
 
         Array.from(files).forEach(file => {
             uploadedFiles.push(file); // Add file to the global array
-
             const fileType = getFileTypeIcon(file);1
             const listItem = document.createElement('li');
             listItem.innerHTML = `${fileType} ${file.name}`;
             fileList.appendChild(listItem);
         });
-
+        
         file = uploadedFiles
         console.log("Uploaded files array:", uploadedFiles);
+        
     }
+
+    
 
     function getFileTypeIcon(file) {
         let fileType;
@@ -140,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.addEventListener('drop', (e) => {
         handleDrop(e);
+        document.body.classList.remove('highlight');
     }, false)
 
     //document.addEventListener('drop', handleDrop, false);
@@ -209,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
             welcomeMessage.style.display = 'none';
             // 这里可以添加发送消息的逻辑
             const fileInfo = document.getElementById('file-info');
-            fileInfo.innerHTML = ``;
+            fileInfo.innerHTML = ``
         }
     });
 
@@ -217,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
         welcomeMessage.style.display = 'none';
         // 这里可以添加发送消息的逻辑
         const fileInfo = document.getElementById('file-info');
-        fileInfo.innerHTML = ``;
+        fileInfo.innerHTML = ``
     });
 
     // Toggle conversation visibility

@@ -98,15 +98,12 @@ class Backend_Api:
             print("languageSelect", languageSelect)
 
             # 处理文件内容（如果有文件上传）
-            print(type(upload_file))
-            print(upload_file)
+
             if len(upload_file) > 0:
                 print(
                     "######################################file uploaded############################################"
                 )
                 # file_content = upload_file.read()
-                print(type(upload_file))
-                print(upload_file)
                 file_content = ''
                 for file_ in upload_file:
                     file_content += readfile(file_,inputmessage)+'\n'
