@@ -6,6 +6,10 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder  # �
 from langchain_core.messages import HumanMessage, AIMessage  # 导入人类消息类和AI消息类
 from langchain_core.runnables.history import RunnableWithMessageHistory  # 导入带有消息历史的可运行类
 from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.vectorstores import FAISS
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.chains import RetrievalQA
 from .logger import LOG
 import os
 from .session_history import get_session_history  # 导入会话历史相关方法
@@ -54,6 +58,7 @@ class ScenarioAgent:
             #     max_tokens=8192,  # 最大生成的token数
             #     temperature=0.8,  # 生成文本的随机性
             # )
+            
             if self.model_type == 'openai':
                 self.chatbot = system_prompt | ChatOpenAI(model=self.choosedmodel, temperature=0,openai_api_base = os.getenv("OPENAI_API_BASE"),streaming=True)
             elif self.model_type == 'kimi':
@@ -64,27 +69,27 @@ class ScenarioAgent:
             # 将聊天机器人与消息历史记录关联起来
             self.chatbot_with_history = RunnableWithMessageHistory(self.chatbot, get_session_history)
 
-    def start_new_session(self, session_id: str = None):
-        """
-        开始一个新的聊天会话，并发送初始AI消息。
+    # def start_new_session(self, session_id: str = None):
+    #     """
+    #     开始一个新的聊天会话，并发送初始AI消息。
         
-        参数:
-            session_id (str): 会话的唯一标识符
-        """
-        if session_id is None:
-            session_id = self.conversation_id
+    #     参数:
+    #         session_id (str): 会话的唯一标识符
+    #     """
+    #     if session_id is None:
+    #         session_id = self.conversation_id
 
-        history = get_session_history(session_id)
-        LOG.debug(f"[history]:{history}")
+    #     history = get_session_history(session_id)
+    #     LOG.debug(f"[history]:{history}")
 
-        if not history.messages:  # 检查历史记录是否为空
-            initial_ai_message = random.choice(self.intro_messages)  # 随机选择初始AI消息
-            history.add_message(AIMessage(content=initial_ai_message))  # 添加初始AI消息到历史记录
+    #     if not history.messages:  # 检查历史记录是否为空
+    #         initial_ai_message = random.choice(self.intro_messages)  # 随机选择初始AI消息
+    #         history.add_message(AIMessage(content=initial_ai_message))  # 添加初始AI消息到历史记录
             
-            return initial_ai_message
-        else:
-            print(history.messages[-1].content)
-            return history.messages[-1].content  # 返回历史记录中的最后一条消息
+    #         return initial_ai_message
+    #     else:
+    #         print(history.messages[-1].content)
+    #         return history.messages[-1].content  # 返回历史记录中的最后一条消息
 
 
     def chat_with_history(self, user_input, session_id: str = None):
@@ -102,8 +107,12 @@ class ScenarioAgent:
         if session_id is None:
             session_id = self.conversation_id
         print('session_id:',session_id)
-        response = self.chatbot_with_history.invoke(
-            [HumanMessage(content=user_input)],  # 将用户输入封装为 HumanMessage    
-            {"configurable": {"session_id": session_id}},  # 传入配置，包括会话ID
-        )
-        return response
+        try:
+            response = self.chatbot_with_history.invoke(
+                [HumanMessage(content=user_input)],  # 将用户输入封装为 HumanMessage    
+                {"configurable": {"session_id": session_id}},  # 传入配置，包括会话ID
+            )
+            return response
+        except Exception as e:
+            LOG.debug(e)
+        

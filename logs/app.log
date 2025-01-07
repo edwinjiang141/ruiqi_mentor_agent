@@ -229,3 +229,164 @@ AI: 好的，我们可以更深入地探讨每种力的特性、应用和例子�
    - **例子**：在旋转的游乐设施中，乘客感受到的向内的力；地球围绕太阳的运动。
 
 这些力在物理学中相互作用，形成了我们周围的世界。你对某一种力的具体应用或特性有更深入的兴趣吗？或者你想了解如何在实验中观察这些力的作用？
+2025-01-04 08:53:36 | ERROR | backend:_audioconver:157 - 处理音频文件时出错: We expect a numpy ndarray as input, got `<class 'werkzeug.datastructures.file_storage.FileStorage'>`
+2025-01-04 08:59:31 | ERROR | backend:_audioconver:161 - 处理音频文件时出错: ffmpeg was not found but is required to load audio files from filename
+2025-01-04 09:30:44 | ERROR | backend:_audioconver:161 - 处理音频文件时出错: ffmpeg was not found but is required to load audio files from filename
+2025-01-04 09:34:26 | INFO | backend:_audioconver:157 - [识别结果]：你好你好你好你好你好你好
+2025-01-04 09:35:58 | INFO | backend:_audioconver:157 - [识别结果]：你好你好
+2025-01-04 09:39:04 | INFO | backend:_audioconver:157 - [识别结果]：我要知道摩擦力是什麼。
+2025-01-04 09:43:53 | INFO | backend:_audioconver:157 - [识别结果]：法則內是什麼?
+2025-01-04 09:44:42 | INFO | backend:_audioconver:157 - [识别结果]：摩擦力是什么?摩擦力是什么?
+2025-01-04 09:45:42 | INFO | backend:_audioconver:157 - [识别结果]：摩擦力是什么?
+2025-01-04 09:47:21 | INFO | backend:_audioconver:157 - [识别结果]：摩擦力是什么?光的反射是什么?
+2025-01-04 09:47:49 | INFO | backend:_audioconver:157 - [识别结果]：摩擦力是什么?光的反射是什么?如何理解光的折射?
+2025-01-04 09:52:32 | INFO | backend:_audioconver:157 - [识别结果]：摩擦力是什么?光的反射是什么?如何理解光的折射?那光的反射知识点有哪些?
+2025-01-04 09:53:00 | INFO | backend:_audioconver:157 - [识别结果]：光的反射是什么?
+2025-01-04 09:53:32 | INFO | backend:_audioconver:157 - [识别结果]：有哪些知识点必须掌握
+2025-01-04 09:54:26 | INFO | backend:_audioconver:157 - [识别结果]：这张图有哪些光的反射指示
+2025-01-04 10:17:24 | INFO | backend:_audioconver:158 - [识别结果]：光的反射支持點有哪些?
+2025-01-04 10:17:28 | ERROR | backend:_audioconver:172 - 处理音频文件时出错: Command '['/usr/bin/python3', '/root/miniconda3/envs/mentor_agent/lib/python3.11/site-packages/playsound.py', 'tts_text.mp3']' returned non-zero exit status 1.
+2025-01-04 10:22:43 | INFO | backend:_audioconver:158 - [识别结果]：光的反射支持点有哪些
+2025-01-04 10:24:25 | INFO | backend:_audioconver:158 - [识别结果]：逛的知识点粉丝有哪些
+2025-01-04 10:26:14 | INFO | backend:_audioconver:158 - [识别结果]：光的反射指示点有哪些
+2025-01-04 10:26:48 | INFO | backend:_audioconver:158 - [识别结果]：光的知识点有哪些?
+2025-01-04 10:33:00 | INFO | backend:_audioconver:158 - [识别结果]：光的反射指示点有哪些
+2025-01-04 10:37:11 | INFO | backend:_audioconver:158 - [识别结果]：我擦力是什么?
+2025-01-04 10:37:37 | DEBUG | backend:_conversation:350 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 10:42:27 | INFO | backend:_audioconver:158 - [识别结果]：如何理解万有引力?
+2025-01-04 10:42:50 | DEBUG | backend:_conversation:350 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 10:48:58 | INFO | backend:_audioconver:161 - [识别结果]：如何理解外流年龄
+2025-01-04 10:49:21 | DEBUG | backend:_conversation:353 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 11:00:27 | INFO | backend:_audioconver:161 - [识别结果]：什么是万有引力?
+2025-01-04 11:01:17 | DEBUG | backend:_conversation:353 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 11:03:17 | INFO | backend:_audioconver:161 - [识别结果]：什么是摩擦力
+2025-01-04 11:04:56 | INFO | backend:_audioconver:161 - [识别结果]：什么是万有引力
+2025-01-04 11:05:21 | INFO | backend:_audioconver:161 - [识别结果]：什么是摩擦力
+2025-01-04 11:07:08 | INFO | backend:_audioconver:161 - [识别结果]：什么是光的反射?
+2025-01-04 11:07:47 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 11:09:27 | INFO | backend:_audioconver:161 - [识别结果]：什么是光的反射
+2025-01-04 11:09:52 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 14:07:26 | INFO | backend:_audioconver:161 - [识别结果]：详细说一下刚才提到的第二种类型
+2025-01-04 14:08:05 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 14:09:00 | INFO | backend:_audioconver:161 - [识别结果]：買了20張賀卡,平均分給7個人,至少還要再買幾張,每個人才能分到4張。
+2025-01-04 14:09:18 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 14:10:59 | INFO | backend:_audioconver:161 - [识别结果]：商店正在促銷,買6張賀卡可以贈送1張,想要28張賀卡,實際只需付幾張賀卡的錢就行了。
+2025-01-04 14:11:18 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-04 14:14:54 | INFO | backend:_audioconver:161 - [识别结果]：描述一下這張照片的含義
+2025-01-04 23:33:52 | INFO | backend:_audioconver:161 - [识别结果]：光的折射有哪些知识点需要掌握?
+2025-01-04 23:34:42 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-05 00:04:05 | INFO | backend:_audioconver:161 - [识别结果]：什么是吉尔定律
+2025-01-05 00:04:47 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-05 00:21:02 | INFO | backend:_audioconver:161 - [识别结果]：什么是牛顿的三大定律
+2025-01-05 00:21:29 | DEBUG | backend:_conversation:363 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-05 12:27:57 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 12:28:57 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 12:28:57 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 12:38:27 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 12:38:27 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 12:38:27 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: expected str, bytes or os.PathLike object, not list
+2025-01-05 14:03:06 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:03:06 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:03:06 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: expected str, bytes or os.PathLike object, not FileStorage
+2025-01-05 14:03:40 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:03:40 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:03:40 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: expected str, bytes or os.PathLike object, not FileStorage
+2025-01-05 14:04:07 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:04:07 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:04:07 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: expected str, bytes or os.PathLike object, not FileStorage
+2025-01-05 14:05:00 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:05:00 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:05:00 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: unstructured package not found, please install it with `pip install unstructured`
+2025-01-05 14:07:14 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:07:14 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:07:16 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: no such file files
+2025-01-05 14:08:57 | INFO | ragloaderend:_ragloader:146 - [upload files is ]：[<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>]
+2025-01-05 14:08:57 | INFO | ragloaderend:_ragloader:147 - [upload category is ]：ora-mos
+2025-01-05 14:08:59 | ERROR | ragloaderend:_ragloader:184 - 处理音频文件时出错: no such file files
+2025-01-05 14:14:06 | ERROR | ragloaderend:_ragloader:189 - 处理音频文件时出错: name 'files' is not defined
+2025-01-05 14:14:47 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:14:47 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:14:49 | ERROR | ragloaderend:_ragloader:189 - 处理音频文件时出错: partition_pdf() is not available because one or more dependencies are not installed. Use: pip install "unstructured[pdf]" (including quotes) to install the required dependencies
+2025-01-05 14:17:21 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:17:21 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:17:21 | ERROR | ragloaderend:_ragloader:189 - 处理音频文件时出错: partition_pdf() is not available because one or more dependencies are not installed. Use: pip install "unstructured[pdf]" (including quotes) to install the required dependencies
+2025-01-05 14:28:15 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:28:15 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:30:36 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:30:36 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:33:34 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:33:34 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:33:38 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:33:38 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:33:39 | ERROR | ragloaderend:_ragloader:190 - 处理音频文件时出错: Unable to get page count. Is poppler installed and in PATH?
+2025-01-05 14:40:24 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:40:24 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:42:09 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:42:09 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 14:42:38 | INFO | ragloaderend:_ragloader:151 - [upload files is ]：<FileStorage: 'ACS Contact Details.pdf' ('application/pdf')>
+2025-01-05 14:42:38 | INFO | ragloaderend:_ragloader:152 - [upload category is ]：ora-mos
+2025-01-05 22:39:02 | INFO | ragloaderend:_ragloader:152 - [upload files is ]：<FileStorage: '数据库RAC+ADG常见问题应急手册_20210312.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-05 22:39:02 | INFO | ragloaderend:_ragloader:153 - [upload category is ]：ora-yunwei
+2025-01-05 22:39:02 | ERROR | ragloaderend:_ragloader:182 - 处理音频文件时出错: cannot access local variable 'text_splitter' where it is not associated with a value
+2025-01-05 22:43:48 | INFO | ragloaderend:_ragloader:152 - [upload files is ]：<FileStorage: '数据库RAC+ADG常见问题应急手册_20210312.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-05 22:43:48 | INFO | ragloaderend:_ragloader:153 - [upload category is ]：ora-yunwei
+2025-01-05 22:44:44 | INFO | ragloaderend:_ragloader:152 - [upload files is ]：<FileStorage: '数据库RAC+ADG常见问题应急手册_20210312.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-05 22:44:44 | INFO | ragloaderend:_ragloader:153 - [upload category is ]：ora-yunwei
+2025-01-05 22:47:04 | INFO | ragloaderend:_ragloader:133 - [upload files is ]：<FileStorage: '数据库RAC+ADG常见问题应急手册_20210312.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-05 22:47:04 | INFO | ragloaderend:_ragloader:134 - [upload category is ]：ora-yunwei
+2025-01-05 22:47:45 | INFO | ragloaderend:_ragloader:133 - [upload files is ]：<FileStorage: 'RAC数据库应急预案.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-05 22:47:45 | INFO | ragloaderend:_ragloader:134 - [upload category is ]：ora-yunwei
+2025-01-06 13:21:17 | DEBUG | backend:_conversation:402 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-06 13:34:56 | INFO | backend:_audioconver:165 - [识别结果]：什么是万有引力?
+2025-01-06 13:35:20 | DEBUG | backend:_conversation:402 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-06 13:57:44 | DEBUG | backend:_conversation:402 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-07 16:22:21 | INFO | scenario_agent:create_chatbot:83 - t
+2025-01-07 16:24:00 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:24:00 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:27:33 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:27:33 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f8f34445580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:27:33 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:31:30 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:31:30 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f8f34445580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:31:30 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:33:41 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:33:41 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f27dc7e1580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:33:41 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:38:57 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:38:57 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f8bc8231580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:38:57 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:38:57 | DEBUG | scenario_agent:chat_with_history:141 - expected string or buffer
+2025-01-07 16:40:48 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:40:48 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f1385fcd580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:40:48 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:40:48 | DEBUG | scenario_agent:chat_with_history:142 - expected string or buffer
+2025-01-07 16:40:48 | INFO | backend:_conversation:323 - None
+2025-01-07 16:43:33 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 16:43:33 | INFO | scenario_agent:create_chatbot:85 - bound=RunnableBinding(bound=RunnableBinding(bound=RunnableLambda(_enter_history), kwargs={}, config={'run_name': 'load_history'}, config_factories=[])
+| RunnableBinding(bound=RunnableLambda(_call_runnable_sync), kwargs={}, config={'run_name': 'check_sync_or_async'}, config_factories=[]), kwargs={}, config={'run_name': 'RunnableWithMessageHistory'}, config_factories=[]) kwargs={} config={} config_factories=[] get_session_history=<function get_session_history at 0x7f21a422d580> history_factory_config=[ConfigurableFieldSpec(id='session_id', annotation=<class 'str'>, name='Session ID', description='Unique identifier for a session.', default='', is_shared=True, dependencies=None)]
+2025-01-07 16:43:33 | INFO | backend:_conversation:321 - begin chat
+2025-01-07 16:43:33 | DEBUG | scenario_agent:chat_with_history:142 - expected string or buffer
+2025-01-07 16:43:33 | INFO | backend:_conversation:323 - response is 
+2025-01-07 17:29:35 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 17:31:03 | INFO | scenario_agent:create_chatbot:83 - test
+2025-01-07 20:52:21 | DEBUG | backend:_conversation:403 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-07 21:53:14 | INFO | backend:_audioconver:165 - [识别结果]：这里面提到的Linux系统收集日志的Stories方式这个文件生成以后收集的信息大概是一个什么样的格式有例子吗
+2025-01-07 21:54:21 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-07 22:28:30 | INFO | backend:_audioconver:165 - [识别结果]：謝謝大家
+2025-01-07 22:28:38 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-07 22:45:42 | INFO | ragloaderend:_ragloader:133 - [upload files is ]：<FileStorage: 'ASM故障应急预案_OCR损坏.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-07 22:45:42 | INFO | ragloaderend:_ragloader:134 - [upload category is ]：ora-yunwei
+2025-01-08 00:19:01 | INFO | backend:_audioconver:165 - [识别结果]：重复第一个图的含义
+2025-01-08 00:19:24 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-08 00:22:56 | INFO | ragloaderend:_ragloader:133 - [upload files is ]：<FileStorage: 'ASM故障应急预案_磁盘offline.docx' ('application/vnd.openxmlformats-officedocument.wordprocessingml.document')>
+2025-01-08 00:22:56 | INFO | ragloaderend:_ragloader:134 - [upload category is ]：ora-yunwei
+2025-01-08 00:33:36 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-08 00:33:50 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-08 00:37:33 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-08 00:38:08 | DEBUG | backend:_conversation:406 - [file_path]:/root/mentor_agent/tts_text.mp3
+2025-01-08 02:04:08 | INFO | backend:_audioconver:165 - [识别结果]：什么是摩擦力?初中的考点有哪些?

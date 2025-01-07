@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', 'zh_CN') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readme Page</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="/assets/js/icons.js"></script>
+    <script src="/assets/js/markdown-it.min.js"></script>
+    <!-- <link rel="stylesheet"
+        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"> -->
+    <link rel="stylesheet" href="/assets/css/github-dark.css">
+    <script>
+        const user_image = `<img src="/assets/img/student.png" alt="User Avatar">`;
+        const gpt_image = `<img src="/assets/img/teacher.png" alt="GPT Avatar">`;
+    </script>   
+    <style>
+        /* 隐藏文件输入元素 */
+        #fileElem {
+            display: none;
+        }
+
+        #file-info {
+            color: #333333;
+            /* 设置文字颜色 */
+            font-family: Arial, sans-serif;
+            /* 设置字体 */
+            font-size: 14px;
+            /* 设置字号 */
+            font-weight: normal;
+            /* 设置非粗体 */
+        }
+    </style>
+    <style>
+        .config-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 1px solid white;
+            border-radius: var(--border-radius-1);
+            background-color: var(--blur-bg);
+            cursor: pointer;
+        }
+
+        .config-container button:hover {
+            background-color: var(--colour-5);
+        }
+
+        .config-container button:focus {
+            border-color: red;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="config-container">
+        <h1>RAG Loader</h1>
+            <div class="field" >
+                <span class="about">{{ lang['vdbtable'] }}</span>
+                <select class="shortselect"   id="vectordb" title="{{ lang['switchvdb'] }}">
+                    <option value="ora-yunwei" selected>上传Oracle运维文档</option>
+                    <option value="ora-guzhang" >上传Oracle故障报告</option>
+                    <option value="ora-mos">上传MOS文档</option>
+                    <!-- <option value="mentor_olympic_maths">奥数--数学</option> -->
+                </select>
+            </div>
+
+            <!-- 文件上传区域 -->
+            <div class="upload-container">
+                <!-- <label for="file-upload" class="upload-label">选择文档文件:</label> -->
+                 <input type="file" id="file-upload" multiple
+                            accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif">
+                <button id="upload-button">上传</button>
+                <ul id="doc-list"></ul>
+            </div>
+        <br>
+        
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.getElementById("file-upload");
+        const uploadButton = document.getElementById("upload-button");
+        const docList = document.getElementById("doc-list");
+        const vectorDBSelect = document.getElementById("vectordb");
+
+        // fileInput.addEventListener("change", function (event) {
+        //     handleDocFiles(event.target.files);
+        // });
+
+        uploadButton.addEventListener("click", function () {
+            uploadFiles();
+        });
+
+        // function handleDocFiles(files) {
+        //     docList.innerHTML = "";
+        //     Array.from(files).forEach(file => {
+        //         console.log("文件已选择:", file.name); // 确保文件成功选择
+        //         const listItem = document.createElement("li");
+        //         listItem.textContent = file.name;
+        //         docList.appendChild(listItem);
+        //     });
+        // }
+
+        async function uploadFiles() {
+            const files = fileInput.files;
+            if (files.length === 0) {
+                alert("请选择要上传的文件");
+                return;
+            }
+
+            const formData = new FormData();
+            for (let file of files) {
+                console.log("上传文件:", file.name);  // 确保文件正确加入 FormData
+                formData.append("files", file);
+            }
+            formData.append("category", vectorDBSelect.value); // 选择分类
+
+            try {
+                const response = await fetch('/backend-api/v2/ragloader', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.text();
+                if (result === "success") {
+                    alert("文件上传成功，已存入FAISS！");
+                } else {
+                    alert("上传失败：" + result.message);
+                }
+            } catch (error) {
+                console.error("上传错误", error);
+            }
+        }
+    });
+
+    </script>
+</body>
+</html>

@@ -27,6 +27,10 @@ class Website:
             '/assets/<folder>/<file>': {
                 'function': self._assets,  # 处理/assets/<folder>/<file>路径的请求
                 'methods': ['GET', 'POST']  # 支持GET和POST请求
+            },
+            '/ragloader/':{
+                'function':self._loader,
+                'methods': ['GET', 'POST']  # 支持GET和POST请求
             }
         }
 
@@ -50,3 +54,7 @@ class Website:
         except:
             # 如果文件未找到，返回404错误
             return "File not found", 404
+    
+    def _loader(self):
+        # 文档加载并渲染ragloader.html模板
+        return render_template('ragloader.html')

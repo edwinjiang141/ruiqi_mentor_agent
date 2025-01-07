@@ -1,5 +1,6 @@
 from json import load
 from server.backend import Backend_Api
+from server.ragloaderend import Ragloader_Api
 from server.website import Website
 from server.app import app
 import webbrowser
@@ -32,6 +33,17 @@ if __name__ == '__main__':
             view_func=backend_api.routes[route]['function'],
             methods=backend_api.routes[route]['methods'],
         )
+
+    ragloader_api = Ragloader_Api(app, config)
+    for route in ragloader_api.routes:
+        app.add_url_rule(
+            route,
+            view_func=ragloader_api.routes[route]['function'],
+            methods=ragloader_api.routes[route]['methods'],
+        )
+
+   
+
 
     print(f"Running on port {site_config['port']}")
     app.run(**site_config)

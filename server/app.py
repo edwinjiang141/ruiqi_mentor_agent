@@ -102,6 +102,34 @@ def config_page():
 def readme_page():
     return send_from_directory('./../client/html', 'readme.html')
 
+@app.route('/ragloader')
+def ragloader_page():
+    print("return to index")
+    config = load_config()
+    # print(session["language"])
+    language_code = session.get("language")
+
+    # 如果 session 中没有设置 language，则使用默认值 "en_US"
+    if not language_code:
+        language_code = "zh_CN"
+        session["language"] = language_code  # 设置默认语言到 session
+
+    print(language_code)
+
+    # language_code = request.args.get("language_code", "en_US")
+    # session["language"] = language_code
+    language_data = next(
+        (lang for lang in translations["languages"] if lang["code"] == language_code),
+        None,
+    )
+    # print(config)
+    return render_template(
+        "ragloader.html",
+        config_options=config,
+        lang=language_data["lang"],
+        languages=LANGUAGES,
+    )
+
 
 @app.route('/api/config', methods=['GET'])
 def get_config():

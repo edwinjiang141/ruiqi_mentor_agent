@@ -77,22 +77,152 @@ document.addEventListener('DOMContentLoaded', function () {
     //     }
     // }
 
+    //audio record and transcribe begin
+    const startRecordingButton = document.getElementById('start-recording');
+    const stopRecordingButton = document.getElementById('stop-recording');
+
+    let mediaRecorder;
+    let audioChunks = [];
+
+    // 开始录音
+    startRecordingButton.addEventListener('click', async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);  // 收集音频数据
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });
+            audioChunks.length = 0
+            sendAudioToBackend(audioFile);  // 将音频文件发送到后端
+            // 生成下载链接
+            // const downloadLink = document.createElement('a');
+            // downloadLink.href = URL.createObjectURL(audioFile);
+            // downloadLink.download = 'audio.wav';  // 指定下载文件名
+            // downloadLink.click();  // 自动触发下载
+        };
+
+        mediaRecorder.start();
+        startRecordingButton.style.display = 'none';
+        stopRecordingButton.style.display = 'inline';
+    });
+
+    // 停止录音
+    stopRecordingButton.addEventListener('click', () => {
+        mediaRecorder.stop();
+        stopRecordingButton.style.display = 'none';
+        startRecordingButton.style.display = 'inline';
+        
+    });
+
+    // 将音频发送到后端
+    async function sendAudioToBackend(audioFile) {
+        const formData = new FormData();
+        formData.append('audio', audioFile);  // 将音频文件添加到表单数据中
+
+        // 发送到后端的API
+        const response = await fetch('/backend-api/v2/audioconver', {
+            method: `POST`,
+            body: formData,
+        });
+
+        const data = await response.text();
+        console.log('识别结果：', data);
+        if (data) {
+            console.log('识别结果：', data);
+            displayResponse(data);  // 在页面显示识别结果
+        }
+    }
+    
+    // 在页面显示识别结果
+    function displayResponse(text) {
+        const messagesDiv = document.getElementById('message-input');
+        messagesDiv.value=text
+        console.log('transfer result:', text);
+        // 模拟回车触发发送操作
+        triggerEnterKey(messagesDiv);  // 自动回车发送
+    }
+
+    // 模拟回车键触发发送
+    function triggerEnterKey(textarea) {
+        // 创建一个键盘事件，模拟回车键按下
+        const enterEvent = new KeyboardEvent('keydown', {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+            charCode: 13,
+            bubbles: true,
+        });
+
+        // 触发事件，模拟用户按下回车键
+        textarea.dispatchEvent(enterEvent);
+    }
+
     const uploadedFiles = []; // Array to store all uploaded files
 
     function handleFiles(files) {
         const fileList = document.getElementById('file-info');
+        fileList.innerHTML = "";
+        fileList.style.display = "flex"; // Set flexbox layout for horizontal alignment
+        fileList.style.flexWrap = "wrap"; // Allow wrapping if too many images
+        fileList.style.gap = "10px"; // Add space between images
+        fileList.style.justifyContent = "center"; // Center align images horizontally
+
 
         Array.from(files).forEach(file => {
             uploadedFiles.push(file); // Add file to the global array
-            const fileType = getFileTypeIcon(file);1
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `${fileType} ${file.name}`;
-            fileList.appendChild(listItem);
+            // const fileType = getFileTypeIcon(file);1
+            // const listItem = document.createElement('li');
+            // listItem.innerHTML = `${fileType} ${file.name}`;
+            // fileList.appendChild(listItem);
+            const fileReader = new FileReader();
+            fileReader.onload = function(event) {
+                const imgContainer = document.createElement('div');
+                imgContainer.classList.add('image-container');
+                imgContainer.style.position = "relative";
+
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.classList.add('thumbnail');
+                img.style.width = "80px"; // Set fixed width for thumbnails
+                img.style.height = "80px"; // Set fixed height for thumbnails
+                img.style.objectFit = "cover"; // Ensure proper aspect ratio
+
+                const closeButton = document.createElement('span');
+                closeButton.textContent = '×';
+                closeButton.classList.add('close-btn');
+                closeButton.style.position = "absolute";
+                closeButton.style.top = "5px";
+                closeButton.style.right = "5px";
+                closeButton.style.cursor = "pointer";
+                closeButton.style.background = "rgba(0, 0, 0, 0.5)";
+                closeButton.style.color = "white";
+                closeButton.style.borderRadius = "50%";
+                closeButton.style.width = "20px";
+                closeButton.style.height = "20px";
+                closeButton.style.display = "flex";
+                closeButton.style.alignItems = "center";
+                closeButton.style.justifyContent = "center";
+                closeButton.addEventListener('click', function () {
+                    imgContainer.remove(); // Remove image when clicked
+                });
+
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(closeButton);
+                fileList.appendChild(imgContainer);
+            };
+
+            if (file.type.startsWith('image')) {
+                fileReader.readAsDataURL(file);
+            }
         });
         
         file = uploadedFiles
         console.log("Uploaded files array:", uploadedFiles);
-        
+
     }
 
     
@@ -121,6 +251,49 @@ document.addEventListener('DOMContentLoaded', function () {
         return fileType;
     }
     
+    //处理文件上传
+    // const fileInput = document.getElementById("file-upload");
+    // const uploadButton = document.getElementById("upload-button");
+    // const docList = document.getElementById("doc-list");
+    // const vectorDBSelect = document.getElementById("vectordb");
+
+    // fileInput.addEventListener("change", function (event) {
+    //     console.log(event.target.files);
+    //     handleDocFiles(event.target.files);
+    // });
+
+    // uploadButton.addEventListener("click", function () {
+    //     console.log("上传按钮被点击");
+    //     uploadFiles();
+    // });
+
+    // function handleDocFiles(files) {
+    //     docList.innerHTML = "";
+    //     Array.from(files).forEach(file => {
+    //         const listItem = document.createElement("li");
+    //         listItem.textContent = file.name+'llll';
+    //         docList.appendChild(listItem);
+    //     });
+    //     console.log('doc files',files)
+
+    // }
+
+    // async function uploadFiles() {
+    //     const files = fileInput.files;
+    //     if (files.length === 0) {
+    //         alert("请选择要上传的文件");
+    //         return;
+    //     }
+
+    //     const formData = new FormData();
+    //     for (let file of files) {
+    //         formData.append("files", file);
+    //     }
+    //     formData.append("category", vectorDBSelect.value); // 选择分类
+
+    //     console.log('doc files',file)
+
+    // }
 
     // 重置页面
     function resetPage() {
@@ -217,8 +390,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.key === 'Enter') {
             welcomeMessage.style.display = 'none';
             // 这里可以添加发送消息的逻辑
-            const fileInfo = document.getElementById('file-info');
-            fileInfo.innerHTML = ``
+            // const fileInfo = document.getElementById('file-info');
+            // fileInfo.innerHTML = ``
+            document.getElementById('file-info').innerHTML = ''
         }
     });
 

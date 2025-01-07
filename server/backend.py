@@ -26,6 +26,79 @@ from langchain_community.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.chains import RetrievalQA
+import torch
+from .logger import LOG
+from playsound import playsound
+import sounddevice as sd
+import numpy as np
+from pydub import AudioSegment
+from transformers import (
+    AutomaticSpeechRecognitionPipeline,BitsAndBytesConfig,
+    WhisperForConditionalGeneration,
+    WhisperTokenizer,
+    WhisperProcessor,
+    pipeline,
+)
+from werkzeug.utils import secure_filename
+from langchain.vectorstores import FAISS
+
+#音频处理
+# 模型名称和参数配置
+model_name_or_path = "/root/autodl-tmp/models/whisper-large-v2"  # Whisper 模型名称
+BATCH_SIZE = 8  # 处理批次大小
+language = "chinese"
+language_abbr = "zh-CN"
+task = "transcribe"
+# 检查是否可以使用 GPU，否则使用 CPU
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+# 初始化语音识别管道
+_compute_dtype_map = {
+    'fp32': torch.float32,
+    'fp16': torch.float16,
+    'bf16': torch.bfloat16
+}
+
+# QLoRA 量化配置
+q_config = BitsAndBytesConfig(load_in_4bit=True,
+                              bnb_4bit_quant_type='nf4',
+                              bnb_4bit_use_double_quant=True,
+                              bnb_4bit_compute_dtype=_compute_dtype_map['bf16'])
+
+model = WhisperForConditionalGeneration.from_pretrained(
+    model_name_or_path, load_in_8bit=True, device_map=device
+)
+
+
+model = WhisperForConditionalGeneration.from_pretrained(model_name_or_path,
+                                  quantization_config=q_config,
+                                  device_map='auto',
+                                  trust_remote_code=True)
+
+# model = PeftModel.from_pretrained(model, peft_model_path)
+tokenizer = WhisperTokenizer.from_pretrained(
+    model_name_or_path, language=language, task=task
+)
+processor = WhisperProcessor.from_pretrained(
+    model_name_or_path, language=language, task=task
+)
+feature_extractor = processor.feature_extractor
+forced_decoder_ids = processor.get_decoder_prompt_ids(language=language, task=task)
+pipe = AutomaticSpeechRecognitionPipeline(
+    model=model, tokenizer=tokenizer, feature_extractor=feature_extractor,
+)
+
+# pipe = pipeline(
+#     task="automatic-speech-recognition",  # 自动语音识别任务
+#     model=MODEL_NAME,  # 指定模型
+#     chunk_length_s=60,  # 每个音频片段的长度（秒）
+#     device=device,  # 指定设备
+# )
+
+
 # 定义Backend_Api类
 def get_recent_conversations(conversation, num_rounds=3):
     # 每轮对话包括两条消息：'user' 和 'assistant'
@@ -65,9 +138,42 @@ class Backend_Api:
             "/backend-api/v2/conversation": {
                 "function": self._conversation,
                 "methods": ["POST"],
+            },
+            "/backend-api/v2/audioconver": {
+                "function": self._audioconver,
+                "methods": ["POST"],
             }
         }
+    
 
+
+    def _audioconver(self):
+        try:
+            # 使用管道进行转录或翻译
+            audio_file = request.files.get('audio')
+            # 保存文件
+            filename = secure_filename(audio_file.filename)
+            audio_path = os.path.join("/root/mentor_agent/audio", filename)
+            audio_file.save(audio_path)
+            result = pipe(
+                audio_path,
+                batch_size=BATCH_SIZE,
+                generate_kwargs={"forced_decoder_ids": forced_decoder_ids},
+                return_timestamps=True
+            )
+            text = result["text"]
+            LOG.info(f"[识别结果]：{text}")
+            
+            return text
+        except Exception as e:
+            LOG.error(f"处理音频文件时出错: {e}")
+            self.app.logger.debug(e)
+            return {
+                "_action": "_ask",
+                "success": False,
+                "error": f"an error occurred {str(e)}",
+            }, 400
+        
     # 定义内部方法_conversation，处理对话请求
 
     def _conversation(self):
@@ -106,7 +212,7 @@ class Backend_Api:
                 # file_content = upload_file.read()
                 file_content = ''
                 for file_ in upload_file:
-                    file_content += readfile(file_,inputmessage)+'\n'
+                    file_content += readfile(file_,inputmessage)+'<br>'
                     print(file_content)
                     # 处理文件的逻辑
                 import time
@@ -210,6 +316,45 @@ class Backend_Api:
                             
 
                     return self.app.response_class(stream(), mimetype="text/event-stream")
+                elif mentor_agent == 'ora_doc':
+                    enbeddings = OpenAIEmbeddings(openai_api_key = os.environ["OPENAI_API_KEY"],openai_api_base = "https://pro.aiskt.com/v1")
+                    #当向量数据库中没有合适答案时，使用大语言模型能力
+
+                    prompt_template = """ <指令>根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，按照如下格式输出:
+                                        1 问题或者故障现象是什么 2 影响或者风险是什么 3 需要收集哪些必要的信息和日志 3 应急处理步骤，包括相关的操作系统命令、SQL查询语句等
+                                        如果无法从中得到答案，请说 “根据已知信息无法回答该问题”，
+                                        一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，答案请使用中文。 </指令>
+                                        <已知信息>{context}</已知信息>
+                                        <问题>{question}</问题>
+                                    """
+                    prompt = PromptTemplate(template = prompt_template,input_variables=["context", "question"])
+
+                    document_search = FAISS.load_local("ora_doc_index", enbeddings,allow_dangerous_deserialization = True)
+
+                    #llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0,openai_organization = "org-cODSJjftWgVspplR3MwUi2HN",openai_api_key = os.environ["OPENAI_API_KEY"])
+                    llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0,openai_api_key = os.environ["OPENAI_API_KEY"],openai_api_base = "https://pro.aiskt.com/v1")
+                    qa_chain = RetrievalQA.from_llm(llm,
+                                                retriever=document_search.as_retriever(search_type="similarity_score_threshold",
+                                                                            search_kwargs={"score_threshold": 0.3}),prompt=prompt)
+                    # qa_chain.combine_documents_chain.document_prompt = PromptTemplate(input_variables=["query"],template="{page_content}")
+                    qa_chain.return_source_documents=True
+                    result = qa_chain({"query": inputmessage})
+                    agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
+                    if not result["source_documents"]:
+                        response = agents.chat_with_history(inputmessage)
+                    else:
+                        response = agents.chat_with_history(result['result']+' Quesion is :'+inputmessage)
+
+                    import time
+
+                    def string_generator(long_string, chunk_size=10):
+                        return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                    
+                    def stream():
+                        for chunk in string_generator(response.content):
+                            yield chunk
+                            time.sleep(0.2)  # 模拟流式输出的延迟
+                    return self.app.response_class(stream(), mimetype="text/event-stream")
                 else:
                     agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
                     # system_prompt = agents.load_prompt()
@@ -236,6 +381,31 @@ class Backend_Api:
                     # # Step 3. That's it! You've done a Tavily Search!
                     # print(web_response['images'][1])
                     #response = response+web_result
+                    client = OpenAI(api_key = os.environ["OPENAI_API_KEY"],base_url = "https://pro.aiskt.com/v1")  # 初始化 OpenAI 客户端
+                    
+                    # # 加载音频文件
+                    # audio = AudioSegment.from_mp3(file_path)
+
+                    # # 将音频转换为 numpy 数组
+                    # samples = np.array(audio.get_array_of_samples())
+
+                    # # 播放音频
+                    # sd.play(samples, audio.frame_rate)
+                    # sd.wait()  # 等待播放结束
+                    if os.path.exists("tts_text.mp3"):
+                        os.remove("tts_text.mp3")
+                    else:
+                        pass
+                    with client.audio.speech.with_streaming_response.create(
+                        model="tts-1",
+                        voice = "nova",
+                        input = response.content
+                    ) as responseaudio:
+                        responseaudio.stream_to_file("tts_text.mp3")
+                    file_path = os.path.join(os.getcwd(), 'tts_text.mp3') 
+                    LOG.debug(f"[file_path]:{file_path}")
+                    #playsound(file_path)
+
                     import time
 
                     def string_generator(long_string, chunk_size=10):
@@ -246,6 +416,8 @@ class Backend_Api:
                             yield chunk
                             time.sleep(0.2)  # 模拟流式输出的延迟
                     return self.app.response_class(stream(), mimetype="text/event-stream")
+                    
+                    
             else:
                 # 访问OpenAI API
                 if mentor_agent == 'code_generate':

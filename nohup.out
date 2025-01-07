@@ -399,3 +399,350 @@ INFO [main] model loaded | tid="140584680759296" timestamp=1728788272
 time=2024-10-13T10:57:52.228+08:00 level=INFO source=server.go:630 msg="llama runner started in 2.01 seconds"
 [GIN] 2024/10/13 - 10:57:53 | 200 |  3.936638329s |       127.0.0.1 | POST     "/api/chat"
 [GIN] 2024/10/13 - 10:58:26 | 200 |  1.286457025s |       127.0.0.1 | POST     "/api/chat"
+2025/01/06 13:07:15 routes.go:1158: INFO server config env="map[CUDA_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_DEBUG:false OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://127.0.0.1:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:/root/autodl-tmp/models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:0 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://*] OLLAMA_SCHED_SPREAD:false OLLAMA_TMPDIR: ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+time=2025-01-06T13:07:15.136+08:00 level=INFO source=images.go:754 msg="total blobs: 26"
+time=2025-01-06T13:07:15.137+08:00 level=INFO source=images.go:761 msg="total unused blobs removed: 0"
+time=2025-01-06T13:07:15.137+08:00 level=INFO source=routes.go:1205 msg="Listening on 127.0.0.1:11434 (version 0.3.14)"
+time=2025-01-06T13:07:15.375+08:00 level=INFO source=common.go:135 msg="extracting embedded files" dir=/tmp/ollama1927520910/runners
+time=2025-01-06T13:07:28.939+08:00 level=INFO source=common.go:49 msg="Dynamic LLM libraries" runners="[cpu cpu_avx cpu_avx2 cuda_v11 cuda_v12 rocm_v60102]"
+time=2025-01-06T13:07:28.939+08:00 level=INFO source=gpu.go:221 msg="looking for compatible GPUs"
+time=2025-01-06T13:07:29.197+08:00 level=INFO source=types.go:123 msg="inference compute" id=GPU-fb98c950-2704-1528-9388-7d8172875a62 library=cuda variant=v12 compute=8.9 driver=12.4 name="NVIDIA GeForce RTX 4090 D" total="23.6 GiB" available="23.3 GiB"
+[GIN] 2025/01/06 - 13:07:29 | 200 |      43.769µs |       127.0.0.1 | HEAD     "/"
+[GIN] 2025/01/06 - 13:07:29 | 200 |    2.083341ms |       127.0.0.1 | GET      "/api/tags"
+Unused kwargs: ['_load_in_4bit', '_load_in_8bit', 'quant_method']. These kwargs are not used in <class 'transformers.utils.quantization_config.BitsAndBytesConfig'>.
+`low_cpu_mem_usage` was None, now default to True since model is quantized.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.33s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.00it/s]
+/root/mentor_agent/server/backend.py:30: LangChainDeprecationWarning: Importing OpenAIEmbeddings from langchain.embeddings is deprecated. Please replace deprecated imports:
+
+>> from langchain.embeddings import OpenAIEmbeddings
+
+with new imports of:
+
+>> from langchain_community.embeddings import OpenAIEmbeddings
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.embeddings.openai import OpenAIEmbeddings
+playsound is relying on another python subprocess. Please use `pip install pygobject` if you want playsound to run more efficiently.
+/root/mentor_agent/server/backend.py:46: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+Device set to use cuda:0
+/root/mentor_agent/server/ragloaderend.py:25: LangChainDeprecationWarning: Importing UnstructuredFileLoader from langchain.document_loaders is deprecated. Please replace deprecated imports:
+
+>> from langchain.document_loaders import UnstructuredFileLoader
+
+with new imports of:
+
+>> from langchain_community.document_loaders import UnstructuredFileLoader
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.document_loaders.unstructured import UnstructuredFileLoader
+/root/mentor_agent/server/ragloaderend.py:26: LangChainDeprecationWarning: Importing UnstructuredImageLoader from langchain.document_loaders is deprecated. Please replace deprecated imports:
+
+>> from langchain.document_loaders import UnstructuredImageLoader
+
+with new imports of:
+
+>> from langchain_community.document_loaders import UnstructuredImageLoader
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.document_loaders.image import UnstructuredImageLoader
+/root/mentor_agent/server/ragloaderend.py:28: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+/root/mentor_agent/server/ragloaderend.py:29: LangChainDeprecationWarning: Importing OpenAIEmbeddings from langchain.embeddings is deprecated. Please replace deprecated imports:
+
+>> from langchain.embeddings import OpenAIEmbeddings
+
+with new imports of:
+
+>> from langchain_community.embeddings import OpenAIEmbeddings
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.embeddings.openai import OpenAIEmbeddings
+/root/mentor_agent/ragloader/document_loader_faiss.py:8: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+******************************************************************
+Running on port 6006
+ * Serving Flask app 'server.app'
+ * Debug mode: on
+2025-01-06 15:29:18,129 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:6006
+2025-01-06 15:29:18,129 - INFO - [33mPress CTRL+C to quit[0m
+2025-01-06 15:29:18,129 - INFO -  * Restarting with stat
+Unused kwargs: ['_load_in_4bit', '_load_in_8bit', 'quant_method']. These kwargs are not used in <class 'transformers.utils.quantization_config.BitsAndBytesConfig'>.
+`low_cpu_mem_usage` was None, now default to True since model is quantized.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.26s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.14it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.07it/s]
+/root/mentor_agent/server/backend.py:30: LangChainDeprecationWarning: Importing OpenAIEmbeddings from langchain.embeddings is deprecated. Please replace deprecated imports:
+
+>> from langchain.embeddings import OpenAIEmbeddings
+
+with new imports of:
+
+>> from langchain_community.embeddings import OpenAIEmbeddings
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.embeddings.openai import OpenAIEmbeddings
+playsound is relying on another python subprocess. Please use `pip install pygobject` if you want playsound to run more efficiently.
+/root/mentor_agent/server/backend.py:46: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+Device set to use cuda:0
+/root/mentor_agent/server/ragloaderend.py:25: LangChainDeprecationWarning: Importing UnstructuredFileLoader from langchain.document_loaders is deprecated. Please replace deprecated imports:
+
+>> from langchain.document_loaders import UnstructuredFileLoader
+
+with new imports of:
+
+>> from langchain_community.document_loaders import UnstructuredFileLoader
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.document_loaders.unstructured import UnstructuredFileLoader
+/root/mentor_agent/server/ragloaderend.py:26: LangChainDeprecationWarning: Importing UnstructuredImageLoader from langchain.document_loaders is deprecated. Please replace deprecated imports:
+
+>> from langchain.document_loaders import UnstructuredImageLoader
+
+with new imports of:
+
+>> from langchain_community.document_loaders import UnstructuredImageLoader
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.document_loaders.image import UnstructuredImageLoader
+/root/mentor_agent/server/ragloaderend.py:28: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+/root/mentor_agent/server/ragloaderend.py:29: LangChainDeprecationWarning: Importing OpenAIEmbeddings from langchain.embeddings is deprecated. Please replace deprecated imports:
+
+>> from langchain.embeddings import OpenAIEmbeddings
+
+with new imports of:
+
+>> from langchain_community.embeddings import OpenAIEmbeddings
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.embeddings.openai import OpenAIEmbeddings
+/root/mentor_agent/ragloader/document_loader_faiss.py:8: LangChainDeprecationWarning: Importing FAISS from langchain.vectorstores is deprecated. Please replace deprecated imports:
+
+>> from langchain.vectorstores import FAISS
+
+with new imports of:
+
+>> from langchain_community.vectorstores import FAISS
+You can use the langchain cli to **automatically** upgrade many imports. Please see documentation here <https://python.langchain.com/docs/versions/v0_2/>
+  from langchain.vectorstores import FAISS
+2025-01-06 15:29:32,699 - WARNING -  * Debugger is active!
+2025-01-06 15:29:32,699 - INFO -  * Debugger PIN: 885-767-987
+2025-01-06 15:36:48,139 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET / HTTP/1.1" 200 -
+2025-01-06 15:36:48,362 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET /assets/css/style.css HTTP/1.1" 200 -
+2025-01-06 15:36:48,366 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET /assets/js/chat.js HTTP/1.1" 200 -
+2025-01-06 15:36:48,366 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET /assets/css/github-dark.css HTTP/1.1" 200 -
+2025-01-06 15:36:48,366 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/js/markdown-it.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,366 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/js/icons.js HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,454 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/js/highlight.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,533 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/js/highlightjs-copy.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,619 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/js/index_basic.js HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,740 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/img/mentor.png HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,740 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "[36mGET /assets/img/favicon-32x32.png HTTP/1.1[0m" 304 -
+2025-01-06 15:36:48,758 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET /assets/css/arrow-down.svg HTTP/1.1" 200 -
+2025-01-06 15:36:48,813 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:48] "GET /api/config HTTP/1.1" 200 -
+2025-01-06 15:36:49,014 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:49] "GET /assets/img/apple-touch-icon.png HTTP/1.1" 200 -
+2025-01-06 15:36:49,023 - INFO - 127.0.0.1 - - [06/Jan/2025 15:36:49] "GET /assets/img/favicon-16x16.png HTTP/1.1" 200 -
+2025-01-06 15:41:01,530 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "GET / HTTP/1.1" 200 -
+2025-01-06 15:41:01,799 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/highlight.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,799 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/highlightjs-copy.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,800 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/markdown-it.min.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,801 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/chat.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,801 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/icons.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,864 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "[36mGET /assets/js/index_basic.js HTTP/1.1[0m" 304 -
+2025-01-06 15:41:01,964 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "GET /assets/css/style.css HTTP/1.1" 200 -
+2025-01-06 15:41:01,989 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:01] "GET /assets/css/github-dark.css HTTP/1.1" 200 -
+2025-01-06 15:41:02,204 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:02] "GET /assets/img/favicon-32x32.png HTTP/1.1" 200 -
+2025-01-06 15:41:02,235 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:02] "GET /assets/css/arrow-down.svg HTTP/1.1" 200 -
+2025-01-06 15:41:02,235 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:02] "[36mGET /assets/img/mentor.png HTTP/1.1[0m" 304 -
+2025-01-06 15:41:02,310 - INFO - 127.0.0.1 - - [06/Jan/2025 15:41:02] "GET /api/config HTTP/1.1" 200 -
+2025-01-06 17:16:18,150 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "GET / HTTP/1.1" 200 -
+2025-01-06 17:16:18,452 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "GET /assets/css/style.css HTTP/1.1" 200 -
+2025-01-06 17:16:18,453 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/css/github-dark.css HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,453 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/js/icons.js HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,455 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "GET /assets/js/chat.js HTTP/1.1" 200 -
+2025-01-06 17:16:18,455 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/js/markdown-it.min.js HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,535 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/js/highlight.min.js HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,675 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/js/highlightjs-copy.min.js HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,675 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/js/index_basic.js HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,815 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/img/favicon-32x32.png HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,815 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "[36mGET /assets/img/mentor.png HTTP/1.1[0m" 304 -
+2025-01-06 17:16:18,846 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "GET /api/config HTTP/1.1" 200 -
+2025-01-06 17:16:18,846 - INFO - 127.0.0.1 - - [06/Jan/2025 17:16:18] "GET /assets/css/arrow-down.svg HTTP/1.1" 200 -
+2025-01-06 22:22:59,228 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "GET / HTTP/1.1" 200 -
+2025-01-06 22:22:59,444 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/js/markdown-it.min.js HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,445 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "GET /assets/css/style.css HTTP/1.1" 200 -
+2025-01-06 22:22:59,447 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/css/github-dark.css HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,448 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/js/icons.js HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,448 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "GET /assets/js/chat.js HTTP/1.1" 200 -
+2025-01-06 22:22:59,491 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/js/highlight.min.js HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,543 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/js/highlightjs-copy.min.js HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,585 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/js/index_basic.js HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,682 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/img/mentor.png HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,683 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/img/favicon-32x32.png HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,714 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "[36mGET /assets/css/arrow-down.svg HTTP/1.1[0m" 304 -
+2025-01-06 22:22:59,759 - INFO - 127.0.0.1 - - [06/Jan/2025 22:22:59] "GET /api/config HTTP/1.1" 200 -
+2025-01-06 22:23:25,946 - INFO - 127.0.0.1 - - [06/Jan/2025 22:23:25] "[36mGET /assets/img/student.png HTTP/1.1[0m" 304 -
+2025-01-06 22:23:26,447 - INFO - 127.0.0.1 - - [06/Jan/2025 22:23:26] "[36mGET /assets/img/teacher.png HTTP/1.1[0m" 304 -
+time=2025-01-06T22:23:27.890+08:00 level=INFO source=server.go:105 msg="system memory" total="755.2 GiB" free="639.1 GiB" free_swap="0 B"
+time=2025-01-06T22:23:27.891+08:00 level=INFO source=memory.go:326 msg="offload to cuda" layers.requested=-1 layers.model=41 layers.offload=30 layers.split="" memory.available="[6.0 GiB]" memory.gpu_overhead="0 B" memory.required.full="7.9 GiB" memory.required.partial="5.9 GiB" memory.required.kv="320.0 MiB" memory.required.allocations="[5.9 GiB]" memory.weights.total="6.0 GiB" memory.weights.repeating="5.5 GiB" memory.weights.nonrepeating="525.0 MiB" memory.graph.full="266.0 MiB" memory.graph.partial="801.0 MiB"
+time=2025-01-06T22:23:27.894+08:00 level=INFO source=server.go:388 msg="starting llama server" cmd="/tmp/ollama1927520910/runners/cuda_v12/ollama_llama_server --model /root/autodl-tmp/models/blobs/sha256-b559938ab7a0392fc9ea9675b82280f2a15669ec3e0e0fc491c9cb0a7681cf94 --ctx-size 2048 --batch-size 512 --embedding --n-gpu-layers 30 --threads 128 --parallel 1 --port 36325"
+time=2025-01-06T22:23:27.894+08:00 level=INFO source=sched.go:449 msg="loaded runners" count=1
+time=2025-01-06T22:23:27.894+08:00 level=INFO source=server.go:587 msg="waiting for llama runner to start responding"
+time=2025-01-06T22:23:27.895+08:00 level=INFO source=server.go:621 msg="waiting for server to become available" status="llm server error"
+INFO [main] starting c++ runner | tid="140696804700160" timestamp=1736173408
+INFO [main] build info | build=10 commit="3a8c75e" tid="140696804700160" timestamp=1736173408
+INFO [main] system info | n_threads=128 n_threads_batch=128 system_info="AVX = 1 | AVX_VNNI = 0 | AVX2 = 0 | AVX512 = 0 | AVX512_VBMI = 0 | AVX512_VNNI = 0 | AVX512_BF16 = 0 | FMA = 0 | NEON = 0 | SVE = 0 | ARM_FMA = 0 | F16C = 0 | FP16_VA = 0 | RISCV_VECT = 0 | WASM_SIMD = 0 | BLAS = 1 | SSE3 = 1 | SSSE3 = 1 | VSX = 0 | MATMUL_INT8 = 0 | LLAMAFILE = 1 | " tid="140696804700160" timestamp=1736173408 total_threads=256
+INFO [main] HTTP server listening | hostname="127.0.0.1" n_threads_http="255" port="36325" tid="140696804700160" timestamp=1736173408
+llama_model_loader: loaded meta data with 35 key-value pairs and 363 tensors from /root/autodl-tmp/models/blobs/sha256-b559938ab7a0392fc9ea9675b82280f2a15669ec3e0e0fc491c9cb0a7681cf94 (version GGUF V3 (latest))
+llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+llama_model_loader: - kv   0:                       general.architecture str              = llama
+llama_model_loader: - kv   1:                               general.type str              = model
+llama_model_loader: - kv   2:                               general.name str              = Mistral Nemo Instruct 2407
+llama_model_loader: - kv   3:                            general.version str              = 2407
+llama_model_loader: - kv   4:                           general.finetune str              = Instruct
+llama_model_loader: - kv   5:                           general.basename str              = Mistral-Nemo
+llama_model_loader: - kv   6:                         general.size_label str              = 12B
+llama_model_loader: - kv   7:                            general.license str              = apache-2.0
+llama_model_loader: - kv   8:                          general.languages arr[str,9]       = ["en", "fr", "de", "es", "it", "pt", ...
+llama_model_loader: - kv   9:                          llama.block_count u32              = 40
+llama_model_loader: - kv  10:                       llama.context_length u32              = 1024000
+llama_model_loader: - kv  11:                     llama.embedding_length u32              = 5120
+llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 1000000.000000
+llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+llama_model_loader: - kv  17:                 llama.attention.key_length u32              = 128
+llama_model_loader: - kv  18:               llama.attention.value_length u32              = 128
+llama_model_loader: - kv  19:                          general.file_type u32              = 2
+llama_model_loader: - kv  20:                           llama.vocab_size u32              = 131072
+llama_model_loader: - kv  21:                 llama.rope.dimension_count u32              = 128
+llama_model_loader: - kv  22:            tokenizer.ggml.add_space_prefix bool             = false
+llama_model_loader: - kv  23:                       tokenizer.ggml.model str              = gpt2
+llama_model_loader: - kv  24:                         tokenizer.ggml.pre str              = tekken
+llama_model_loader: - kv  25:                      tokenizer.ggml.tokens arr[str,131072]  = ["<unk>", "<s>", "</s>", "[INST]", "[...
+llama_model_loader: - kv  26:                  tokenizer.ggml.token_type arr[i32,131072]  = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ...
+time=2025-01-06T22:23:28.147+08:00 level=INFO source=server.go:621 msg="waiting for server to become available" status="llm server loading model"
+llama_model_loader: - kv  27:                      tokenizer.ggml.merges arr[str,269443]  = ["Ġ Ġ", "Ġ t", "e r", "i n", "Ġ �...
+llama_model_loader: - kv  28:                tokenizer.ggml.bos_token_id u32              = 1
+llama_model_loader: - kv  29:                tokenizer.ggml.eos_token_id u32              = 2
+llama_model_loader: - kv  30:            tokenizer.ggml.unknown_token_id u32              = 0
+llama_model_loader: - kv  31:               tokenizer.ggml.add_bos_token bool             = true
+llama_model_loader: - kv  32:               tokenizer.ggml.add_eos_token bool             = false
+llama_model_loader: - kv  33:                    tokenizer.chat_template str              = {%- if messages[0]['role'] == 'system...
+llama_model_loader: - kv  34:               general.quantization_version u32              = 2
+llama_model_loader: - type  f32:   81 tensors
+llama_model_loader: - type q4_0:  281 tensors
+llama_model_loader: - type q6_K:    1 tensors
+llm_load_vocab: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+llm_load_vocab: special tokens cache size = 1000
+llm_load_vocab: token to piece cache size = 0.8498 MB
+llm_load_print_meta: format           = GGUF V3 (latest)
+llm_load_print_meta: arch             = llama
+llm_load_print_meta: vocab type       = BPE
+llm_load_print_meta: n_vocab          = 131072
+llm_load_print_meta: n_merges         = 269443
+llm_load_print_meta: vocab_only       = 0
+llm_load_print_meta: n_ctx_train      = 1024000
+llm_load_print_meta: n_embd           = 5120
+llm_load_print_meta: n_layer          = 40
+llm_load_print_meta: n_head           = 32
+llm_load_print_meta: n_head_kv        = 8
+llm_load_print_meta: n_rot            = 128
+llm_load_print_meta: n_swa            = 0
+llm_load_print_meta: n_embd_head_k    = 128
+llm_load_print_meta: n_embd_head_v    = 128
+llm_load_print_meta: n_gqa            = 4
+llm_load_print_meta: n_embd_k_gqa     = 1024
+llm_load_print_meta: n_embd_v_gqa     = 1024
+llm_load_print_meta: f_norm_eps       = 0.0e+00
+llm_load_print_meta: f_norm_rms_eps   = 1.0e-05
+llm_load_print_meta: f_clamp_kqv      = 0.0e+00
+llm_load_print_meta: f_max_alibi_bias = 0.0e+00
+llm_load_print_meta: f_logit_scale    = 0.0e+00
+llm_load_print_meta: n_ff             = 14336
+llm_load_print_meta: n_expert         = 0
+llm_load_print_meta: n_expert_used    = 0
+llm_load_print_meta: causal attn      = 1
+llm_load_print_meta: pooling type     = 0
+llm_load_print_meta: rope type        = 0
+llm_load_print_meta: rope scaling     = linear
+llm_load_print_meta: freq_base_train  = 1000000.0
+llm_load_print_meta: freq_scale_train = 1
+llm_load_print_meta: n_ctx_orig_yarn  = 1024000
+llm_load_print_meta: rope_finetuned   = unknown
+llm_load_print_meta: ssm_d_conv       = 0
+llm_load_print_meta: ssm_d_inner      = 0
+llm_load_print_meta: ssm_d_state      = 0
+llm_load_print_meta: ssm_dt_rank      = 0
+llm_load_print_meta: ssm_dt_b_c_rms   = 0
+llm_load_print_meta: model type       = 13B
+llm_load_print_meta: model ftype      = Q4_0
+llm_load_print_meta: model params     = 12.25 B
+llm_load_print_meta: model size       = 6.58 GiB (4.61 BPW) 
+llm_load_print_meta: general.name     = Mistral Nemo Instruct 2407
+llm_load_print_meta: BOS token        = 1 '<s>'
+llm_load_print_meta: EOS token        = 2 '</s>'
+llm_load_print_meta: UNK token        = 0 '<unk>'
+llm_load_print_meta: LF token         = 1196 'Ä'
+llm_load_print_meta: EOG token        = 2 '</s>'
+llm_load_print_meta: max token length = 150
+ggml_cuda_init: GGML_CUDA_FORCE_MMQ:    no
+ggml_cuda_init: GGML_CUDA_FORCE_CUBLAS: no
+ggml_cuda_init: found 1 CUDA devices:
+  Device 0: NVIDIA GeForce RTX 4090 D, compute capability 8.9, VMM: yes
+llm_load_tensors: ggml ctx size =    0.34 MiB
+llm_load_tensors: offloading 30 repeating layers to GPU
+llm_load_tensors: offloaded 30/41 layers to GPU
+llm_load_tensors:        CPU buffer size =  6736.58 MiB
+llm_load_tensors:      CUDA0 buffer size =  4388.67 MiB
+llama_new_context_with_model: n_ctx      = 2048
+llama_new_context_with_model: n_batch    = 512
+llama_new_context_with_model: n_ubatch   = 512
+llama_new_context_with_model: flash_attn = 0
+llama_new_context_with_model: freq_base  = 1000000.0
+llama_new_context_with_model: freq_scale = 1
+llama_kv_cache_init:  CUDA_Host KV buffer size =    80.00 MiB
+llama_kv_cache_init:      CUDA0 KV buffer size =   240.00 MiB
+llama_new_context_with_model: KV self size  =  320.00 MiB, K (f16):  160.00 MiB, V (f16):  160.00 MiB
+llama_new_context_with_model:  CUDA_Host  output buffer size =     0.52 MiB
+llama_new_context_with_model:      CUDA0 compute buffer size =   791.00 MiB
+llama_new_context_with_model:  CUDA_Host compute buffer size =    14.01 MiB
+llama_new_context_with_model: graph nodes  = 1286
+llama_new_context_with_model: graph splits = 114
+INFO [main] model loaded | tid="140696804700160" timestamp=1736173410
+time=2025-01-06T22:23:30.295+08:00 level=INFO source=server.go:626 msg="llama runner started in 2.40 seconds"
+[GIN] 2025/01/06 - 22:25:04 | 200 |         1m37s |       127.0.0.1 | POST     "/api/chat"
+2025-01-06 22:25:04,651 - INFO - 127.0.0.1 - - [06/Jan/2025 22:25:04] "POST /backend-api/v2/conversation HTTP/1.1" 200 -

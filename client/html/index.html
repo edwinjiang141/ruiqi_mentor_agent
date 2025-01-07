@@ -99,6 +99,7 @@
                     <option value="english_mentor_rent">英语练习--租房</option>
                     <option value="english_mentor_word">英语练习--单词</option>
                     <option value="code_generate">生成代码</option>
+                    <option value="ora_doc">DB_RAG问答</option>
                     <!-- <option value="mentor_olympic_maths">奥数--数学</option> -->
                 </select>
             </div>
@@ -173,12 +174,22 @@
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                     <span>Clear All</span>
                 </button>
+                
+            </div>
+            <div class="new_convo">
+                <button id="start-recording" title="开始录音">
+                    <i class="fa fa-microphone"></i> 开始录音
+                </button>
+                <button id="stop-recording" style="display:none" title="停止录音">
+                    <i class="fa fa-stop"></i> 停止录音
+                </button>
             </div>
             <div class="top">
                 <div class="spinner"></div>
             </div>
             <div class="bottom_buttons">
             </div>
+            
         </div>
         <div class="conversation disable-scrollbars">
             <div class="stop_generating stop_generating-hidden">
@@ -225,8 +236,9 @@
                         {% endfor %}
                     </select>
                     </form>
-                    <a class="about" href="/readme" target="_blank" title="readme" style="text-decoration: none;"><img
-                            src="/assets/img/favicon-32x32.png" alt="User Avatar" style="display:none"></a>
+                    
+                    <a class="about" href="/ragloader" target="_blank" title="RAG Loader" style="text-decoration: none;"><img
+                        src="/assets/img/favicon-32x32.png" alt="User Avatar"></a>
                 </div>
             </div>
             <div class="box_main" id="messages">
@@ -234,9 +246,7 @@
             <div class="user-input">
                 <div class="box-foruser-input">
                     <div class="file-name" style="display:block">
-                        <div id="file-info">
-                            
-                        </div>
+                        <div id="file-info"></div>
 
                         <input type="file" id="fileElem" multiple
                             accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
@@ -256,7 +266,7 @@
     <div class="mobile-sidebar">
         <i class="fa-solid fa-bars"></i>
     </div>
-    <div id="welcome-message" class="welcome-message" >
+    <div id="welcome-message" class="welcome-message" style="display: none;>
         <p>{{ lang['welcome-msg'] }}</p>
         <div class="emoji-container" style="display:none">
             <div class="emoji-box" id="ragask">
