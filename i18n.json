@@ -5,7 +5,7 @@
             "code": "zh_CN",
             "name": "简体中文",
             "lang": {
-                "app-title": "初中导师平台",
+                "app-title": "AI Agent 平台",
                 "welcome-msg": "欢迎使用初中导师平台，您今天想问什么问题?",
                 "newsess": "新建对话",
                 "delsess": "删除所有对话",
@@ -21,7 +21,7 @@
             "code": "en_US",
             "name": "English (US)",
             "lang": {
-                "app-title": "Mentor Platform",
+                "app-title": "AI Agent Platform",
                 "welcome-msg": "Welcome to the Mentor platform, what questions do you want to ask today?",
                 "newsess": "Start New Conversation",
                 "delsess": "Delete All Conversations",

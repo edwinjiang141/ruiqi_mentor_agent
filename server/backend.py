@@ -212,16 +212,20 @@ class Backend_Api:
                 # file_content = upload_file.read()
                 file_content = ''
                 for file_ in upload_file:
-                    file_content += readfile(file_,inputmessage)+'<br>'
+                    file_content += readfile(file_,inputmessage)+'<br><br>'
                     print(file_content)
                     # 处理文件的逻辑
+                
+                agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
+                response = agents.chat_with_history('从语言学、修辞技巧和表达精准性的专业角度，对所得图片的描述进行深入优化，确保用词准确、句式流畅、逻辑清晰，并提升可读性和信息传达的有效性，使其更加符合专业表达标准。只输出优化后的结果，中间过程不需要'+file_content)
+
                 import time
                 def string_generator(long_string, chunk_size=10):
                     return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
                 def stream():
                     # for chunk in response.content:
                     #     yield chunk
-                    for chunk in string_generator(file_content):
+                    for chunk in string_generator(response.content):
                         yield chunk
                         time.sleep(0.2)  # 模拟流式输出的延迟
 
