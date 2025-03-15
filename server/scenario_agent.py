@@ -49,9 +49,17 @@ class ScenarioAgent:
             # 创建聊天提示模板，包括系统提示和消息占位符
             system_prompt = ChatPromptTemplate.from_messages([
                 ("system", self.prompt),  # 系统提示部分
-                MessagesPlaceholder(variable_name="messages"),  # 消息占位符
+                MessagesPlaceholder(variable_name="history"),  # 消息占位符
+                ("human", "{question}"),
             ])
-
+            # total_messages = get_session_history
+            # ai_messages = ""
+            # for message in get_session_history(self.conversation_id).messages:
+            #     if message.type == "ai":
+            #         ai_messages = ai_messages + message.content
+            # print('ai_messages total are',ai_messages)
+            # ai_message = AIMessage(content=ai_messages)
+            # system_prompt.format_prompt(conversation=[ai_message]).to_messages()
             # 初始化 ChatOllama 模型，配置模型参数
             # self.chatbot = system_prompt | ChatOllama(
             #     model="mistral-nemo:12b",  # 使用的模型名称
@@ -63,11 +71,10 @@ class ScenarioAgent:
                 self.chatbot = system_prompt | ChatOpenAI(model=self.choosedmodel, temperature=0,openai_api_base = os.getenv("OPENAI_API_BASE"),streaming=True)
             elif self.model_type == 'kimi':
                 self.chatbot = system_prompt | ChatOpenAI(model=self.choosedmodel, temperature=0,api_key=os.getenv("KIMI_API_KEY"),openai_api_base = os.getenv("KIMI_API_BASE"),streaming=True)
-            else:
-                self.chatbot = system_prompt | ChatOllama(model=self.choosedmodel,max_tokens=8192, temperature=0.8)
-            print(self.choosedmodel)
+            elif self.model_type == 'ollama':
+                self.chatbot = system_prompt | ChatOllama(model=self.choosedmodel,max_tokens=32768, temperature=0.0)
             # 将聊天机器人与消息历史记录关联起来
-            self.chatbot_with_history = RunnableWithMessageHistory(self.chatbot, get_session_history)
+            self.chatbot_with_history = RunnableWithMessageHistory(self.chatbot, get_session_history=get_session_history,input_messages_key="question",history_messages_key="history")
 
     # def start_new_session(self, session_id: str = None):
     #     """
@@ -107,10 +114,11 @@ class ScenarioAgent:
         if session_id is None:
             session_id = self.conversation_id
         print('session_id:',session_id)
+        print("user_input is:",user_input)
         try:
             response = self.chatbot_with_history.invoke(
-                [HumanMessage(content=user_input)],  # 将用户输入封装为 HumanMessage    
-                {"configurable": {"session_id": session_id}},  # 传入配置，包括会话ID
+                {"question":HumanMessage(content=user_input)},  # 将用户输入封装为 HumanMessage    
+                config={"configurable": {"session_id": session_id}},  # 传入配置，包括会话ID
             )
             return response
         except Exception as e:

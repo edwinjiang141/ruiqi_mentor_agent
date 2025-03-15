@@ -1,0 +1,25 @@
+Host=cnXXXXX
+Target type=Oracle Exadata Storage Server
+Target name=cnxxxxx
+Categories=Availability
+Message=xxx is down. HBA Controler Status is UNKNOWN and Ping Status is FAILED. Refer to the response metric for more information.
+Severity=Fatal
+Event reported time=Feb 27, 2025 11:51:42 AM CST
+Operating System=Linux
+Platform=x86_64
+Associated Incident Id=114825
+Associated Incident Status=New
+Associated Incident Owner=
+Associated Incident Acknowledged By Owner=No
+Associated Incident Priority=None
+Associated Incident Escalation Level=0
+Event Type=Target Availability
+Event name=Status
+Availability status=Down
+Root Cause Analysis Status=Neither Cause Nor Symptom
+Causal analysis result=Neither a cause nor a symptom
+Rule Name=XXXX_DBaaS_Prod_RuleSet,E1_XD_Available
+Rule Owner=SYSMAN
+Update Details:
+xxxx is down. HBA Controler Status is UNKNOWN and Ping Status is FAILED. Refer to the response metric for more information.
+Incident created by rule (Name = Incident management rule set for all targets, Incident creation rule for a Target Down availability status [System generated rule]).

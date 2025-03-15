@@ -512,6 +512,75 @@ input[type="text"]:focus {
     max-height: 10vh;
 }
 
+/*添加图片的CSS样式 2025-01-10*/
+/* 添加图片的CSS样式 2025-01-10 */
+/* 图片容器样式 */
+.image-content {
+    width: 100%; /* 容器宽度动态调整 */
+    text-align: center; /* 图片水平居中 */
+    margin-top: 10px;
+    overflow: hidden; /* 确保初始状态下图片不会超出容器 */
+    position: relative; /* 保证子元素绝对定位时以父容器为基准 */
+}
+
+/* 图片默认样式 */
+.image-content img {
+    max-width: 100%; /* 图片最大宽度适应容器 */
+    height: auto; /* 高度按比例调整 */
+    border-radius: 5px; /* 圆角 */
+    transition: transform 0.3s ease, z-index 0.3s ease; /* 平滑缩放效果 */
+    cursor: pointer; /* 鼠标悬停时显示可点击指针 */
+}
+
+/* 点击放大后的样式 */
+.image-content img.zoomed {
+    position: fixed; /* 固定定位，脱离文档流，覆盖全屏 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(3); /* 居中并放大 */
+    z-index: 1000; /* 确保图片在最上层 */
+    border-radius: 10px; /* 放大后可调整圆角 */
+    background: rgba(0, 0, 0, 0.5); /* 可选，增加背景透明度效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影提升视觉效果 */
+}
+
+
+
+/*添加删除向量的CSS样式 2025-01-10*/  
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.file-table th, .file-table td {
+    border: 1px solid #cb2143;
+    padding: 10px;
+    text-align: left;
+}
+
+/* 高亮表头 */
+.file-table th {
+    background: #9b86e0;
+}
+
+/* 🔥 关键：确保 checkbox 可见 */
+.file-table input[type="checkbox"] {
+    display: inline-block !important;  /* 防止被隐藏 */
+    visibility: visible !important;  /* 确保可见 */
+    opacity: 1 !important;  /* 透明度恢复 */
+    width: auto !important;  /* 防止宽度变 0 */
+    height: auto !important; /* 防止高度变 0 */
+    transform: scale(1.5);  /* 放大 checkbox 让其明显可见 */
+    cursor: pointer;
+}
+
+
+
+
+
+
+
 .conversation .user-input {
     
  

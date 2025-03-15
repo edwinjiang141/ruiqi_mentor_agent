@@ -1,0 +1,24 @@
+##在 Oracle 数据库中，不可用索引（Unusable Index）可能带来的坏处及处理方式如下
+坏处：
+1. 影响查询性能  2. DML 操作失败  3. 索引扫描不可用  4. 自动统计信息收集失败  
+处理方式：
+1. 重新构建索引
+   ```sql
+   ALTER INDEX index_name REBUILD;
+   ```
+2. 启用分区索引
+   ```sql
+   ALTER INDEX index_name REBUILD PARTITION partition_name;
+   ```
+3. 删除并重新创建索引
+   ```sql
+   DROP INDEX index_name;
+   CREATE INDEX index_name ON table_name(column_name);
+   ```
+4. 检查约束并调整策略
+   - 如果索引绑定了唯一约束（UNIQUE KEY）或主键（PRIMARY KEY），并且索引不可用，可以先禁用约束，再重建索引：
+   ```sql
+   ALTER TABLE table_name DISABLE CONSTRAINT constraint_name;
+   ALTER INDEX index_name REBUILD;
+   ALTER TABLE table_name ENABLE CONSTRAINT constraint_name;
+   ```

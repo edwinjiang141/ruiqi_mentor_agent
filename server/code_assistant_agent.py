@@ -43,7 +43,7 @@ class CodeAssistantAgent:
     # 定义条件函数，决定是否继续反思过程
     # 如果消息数量超过6条，则终止流程
     def should_continue(self,state: State):
-        MAX_ROUND = 2
+        MAX_ROUND = 5
         if len(state["messages"]) > MAX_ROUND:
             return END  # 达到条件时，流程结束
         return "reflect"  # 否则继续进入反思节点

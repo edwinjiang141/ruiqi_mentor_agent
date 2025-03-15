@@ -26,58 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         handleFiles(files);
     }
-
-    // 处理文件
-    // function handleFiles(files) {
-    //     file = files[0];
-    //     document.body.classList.remove('highlight');
-    //     displayFileInfo(file);
-        
-    // }
-
-    // // 显示文件信息
-    // function displayFileInfo(file) {
-    //     const fileInfo = document.getElementById('file-info');
-    //     //const filePrompt = document.getElementById('file-prompt');
-    //     //const fileLabel = document.getElementById('file-label');
-    //     //filePrompt.classList.add('hidden');
-    //     //fileLabel.classList.add('hidden');
-
-    //     let fileType;
-    //     console.log(file.type)
-    //     if (file.type.startsWith('text') || file.name.endsWith('.log')) {
-    //         if (file.type.includes('python')) {
-    //             fileType = '🐍';
-    //         } else if (file.type.includes('javascript') || file.type.includes('html') || file.type.includes('css')) {
-    //             fileType = '📜';
-    //         } else if (file.type.includes('java')) {
-    //             fileType = '☕';
-    //         } else {
-    //             fileType = '📄';
-
-    //         }
-
-
-    //     } else if (file.type.startsWith('image')) {
-    //         fileType = '🖼️';
-    //     } else if (file.name.endsWith('.pdf')) {
-    //         fileType = '📙';
-    //     } else if (file.name.endsWith('.docx')) {
-    //         fileType = '📘';
-    //     } else {
-    //         fileType = '❓';
-    //     }
-    //     fileInfo.innerHTML = `${fileType} ${file.name}`;
-    // }
-    // function resetFileInput() {
-    //     const fileInput = document.getElementById('file-info2');
-    //     console.log("fileInput:", fileInput.value );
-    //     if (fileInput) {
-    //         fileInput.value = ""; // Reset the file input value
-    //     }
-    // }
-
-    //audio record and transcribe begin
+    
+    //处理音频文件  20250111
     const startRecordingButton = document.getElementById('start-recording');
     const stopRecordingButton = document.getElementById('stop-recording');
 
@@ -96,13 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
         mediaRecorder.onstop = () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
             const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });
-            audioChunks.length = 0
             sendAudioToBackend(audioFile);  // 将音频文件发送到后端
-            // 生成下载链接
-            // const downloadLink = document.createElement('a');
-            // downloadLink.href = URL.createObjectURL(audioFile);
-            // downloadLink.download = 'audio.wav';  // 指定下载文件名
-            // downloadLink.click();  // 自动触发下载
+            audioChunks.length = 0
         };
 
         mediaRecorder.start();
@@ -115,37 +60,25 @@ document.addEventListener('DOMContentLoaded', function () {
         mediaRecorder.stop();
         stopRecordingButton.style.display = 'none';
         startRecordingButton.style.display = 'inline';
-        
     });
 
     // 将音频发送到后端
     async function sendAudioToBackend(audioFile) {
         const formData = new FormData();
         formData.append('audio', audioFile);  // 将音频文件添加到表单数据中
-
+        const messageInput = document.getElementById('message-input');
+        messageInput.value = "";
         // 发送到后端的API
         const response = await fetch('/backend-api/v2/audioconver', {
-            method: `POST`,
+            method: 'POST',
             body: formData,
         });
-
-        const data = await response.text();
-        console.log('识别结果：', data);
-        if (data) {
-            console.log('识别结果：', data);
-            displayResponse(data);  // 在页面显示识别结果
+        console.log(response);  // 检查响应对象
+        const text = await response.text(); 
+        console.log("Raw response:", text); // 打印返回的原始数据
+        messageInput.value = text;  // 填充识别结果
+        triggerEnterKey(messageInput);  // 自动回车发送
         }
-    }
-    
-    // 在页面显示识别结果
-    function displayResponse(text) {
-        const messagesDiv = document.getElementById('message-input');
-        messagesDiv.value=text
-        console.log('transfer result:', text);
-        // 模拟回车触发发送操作
-        triggerEnterKey(messagesDiv);  // 自动回车发送
-    }
-
     // 模拟回车键触发发送
     function triggerEnterKey(textarea) {
         // 创建一个键盘事件，模拟回车键按下
@@ -156,13 +89,15 @@ document.addEventListener('DOMContentLoaded', function () {
             charCode: 13,
             bubbles: true,
         });
-
         // 触发事件，模拟用户按下回车键
         textarea.dispatchEvent(enterEvent);
     }
 
-    const uploadedFiles = []; // Array to store all uploaded files
+    //处理音频文件结束
 
+
+    uploadedFiles = []
+    // 处理文件
     function handleFiles(files) {
         const fileList = document.getElementById('file-info');
         fileList.innerHTML = "";
@@ -170,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fileList.style.flexWrap = "wrap"; // Allow wrapping if too many images
         fileList.style.gap = "10px"; // Add space between images
         fileList.style.justifyContent = "center"; // Center align images horizontally
-
 
         Array.from(files).forEach(file => {
             uploadedFiles.push(file); // Add file to the global array
@@ -187,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const img = document.createElement('img');
                 img.src = event.target.result;
                 img.classList.add('thumbnail');
-                img.style.width = "80px"; // Set fixed width for thumbnails
+                img.style.width = "150px"; // Set fixed width for thumbnails
                 img.style.height = "80px"; // Set fixed height for thumbnails
                 img.style.objectFit = "cover"; // Ensure proper aspect ratio
 
@@ -419,7 +353,79 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
 
+    // 导航方块处理
+    const navBlocks = document.querySelectorAll('.nav-block');
+    let currentValue = 'image_to_text'; // 默认值
+
+    // 确保初始化时设置正确的激活状态
+    function initializeNavBlocks() {
+        navBlocks.forEach(block => {
+            if(block.dataset.value === currentValue) {
+                block.classList.add('active');
+            } else {
+                block.classList.remove('active');
+            }
+        });
+        // 初始化时更新UI
+        updateUIForMode(currentValue);
+    }
+
+    // 页面加载完成后立即初始化
+    initializeNavBlocks();
+
+    // 初始化选中状态
+    navBlocks.forEach(block => {
+        if(block.dataset.value === currentValue) {
+            block.classList.add('active');
+        }
+    });
+
+    // 点击事件处理
+    navBlocks.forEach(block => {
+        block.addEventListener('click', function() {
+            // 移除所有active类
+            navBlocks.forEach(b => b.classList.remove('active'));
+            // 添加active类到当前点击的方块
+            this.classList.add('active');
+            // 更新当前值
+            currentValue = this.dataset.value;
+            
+            // 更新UI显示
+            updateUIForMode(currentValue);
+        });
+    });
+
+    // 根据不同模式更新UI显示
+    function updateUIForMode(mode) {
+        const messageInput = document.getElementById('message-input');
+        const fileInfo = document.getElementById('file-info');
+
+        switch(mode) {
+            case 'image_to_text':
+                messageInput.placeholder = '请上传图片或输入问题...';
+                fileInfo.style.display = 'block';
+                break;
+            case 'ora_awr':
+                messageInput.placeholder = '请上传OEM告警信息或输入分析要求...';
+                fileInfo.style.display = 'block';
+                break;
+            case 'ora_doc':
+                messageInput.placeholder = '请输入数据库相关问题...';
+                fileInfo.style.display = 'none';
+                break;
+            case 'ora_check':  // 添加新的模式
+            messageInput.placeholder = '请输入巡检相关问题...';
+            fileInfo.style.display = 'block';
+            break;
+        }
+    }
+
+    // 初始化UI显示
+    updateUIForMode(currentValue);
+});
 document.getElementById('memory').addEventListener('input', function () {
     var memoryValue = document.getElementById('memory').value;
     document.getElementById('memoryvalue').textContent = memoryValue;
@@ -651,6 +657,13 @@ document.addEventListener('click', function (event) {
         event.target.classList.toggle('zoomed');
     }
 });
+//添加图片放大功能 2025-01-10
+document.addEventListener('click', function (event) {
+    if (event.target.tagName === 'IMG' && event.target.closest('.image-content')) {
+        event.target.classList.toggle('zoomed');
+    }
+});
+
 document.getElementById('decrement').addEventListener('click', function () {
     var input = document.getElementById('Temperature');
     var value = parseFloat(input.value);

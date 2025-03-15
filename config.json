@@ -20,14 +20,18 @@
     "ollama_base": "",
     "ollama_model_list": [
         "mistral-nemo:12b",
-        "llama3:8b-instruct-q6_K"
+        "gpt-4o",
+        "gpt-4o-mini",
+        "deepseek-r1:32b",
+        "deepseek-r1:70b"
     ],
     "ollama_model_select": [
         {
             "mistral-nemo:12b": "mistral-nemo:12b",
             "gpt-4o":"gpt-4o",
             "gpt-4o-mini":"gpt-4o-mini",
-            "moonshot-v1-128k": "moonshot-v1-128k"
+            "deepseek-r1:32b":"deepseek-r1:32b",
+            "deepseek-r1:70b":"deepseek-r1:70b"
         }
     ],
     "ollama_options": {

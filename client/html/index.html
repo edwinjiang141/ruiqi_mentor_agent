@@ -41,6 +41,150 @@
             /* 设置非粗体 */
         }
     </style>
+    <!-- 添加新的样式 -->
+    <style>
+        .nav-blocks-container {
+            width: 100%;
+            padding: 20px;
+            background: var(--boxmain);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .nav-blocks {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .nav-block {
+            width: 150px;
+            height: 120px;
+            border-radius: 12px;
+            background: var(--blur-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-block.active {
+            background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+            color: white;
+        }
+        
+        .nav-block.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+        
+        .nav-block i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .nav-block span {
+            font-size: 16px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .nav-block:hover i,
+        .nav-block.active i {
+            transform: scale(1.1);
+        }
+        
+        /* 添加点击反馈效果 */
+        .nav-block:active {
+            transform: scale(0.95);
+        }
+        
+        /* 自定义每个方块的颜色 */
+        .nav-block[data-value="image_to_text"] {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .nav-block[data-value="ora_awr"] {
+            border-left: 4px solid #2196F3;
+        }
+        
+        .nav-block[data-value="ora_doc"] {
+            border-left: 4px solid #FF9800;
+        }
+        
+        .nav-block[data-value="image_to_text"].active {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+        }
+        
+        .nav-block[data-value="ora_awr"].active {
+            background: linear-gradient(145deg, #2196F3, #1e88e5);
+        }
+        
+        .nav-block[data-value="ora_doc"].active {
+            background: linear-gradient(145deg, #FF9800, #f57c00);
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .nav-blocks {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        
+            .nav-block {
+                width: calc(33.33% - 10px);
+                height: 100px;
+            }
+        
+            .nav-block i {
+                font-size: 24px;
+            }
+        
+            .nav-block span {
+                font-size: 14px;
+            }
+        }
+        .nav-block[data-value="ora_check"] {
+            border-left: 4px solid #9C27B0;  /* 紫色边框 */
+        }
+
+        .nav-block[data-value="ora_check"].active {
+            background: linear-gradient(145deg, #9C27B0, #7B1FA2);
+        }
+
+        /* 调整导航块容器宽度以适应新增的按钮 */
+        .nav-blocks {
+            max-width: 800px;  /* 增加最大宽度以容纳新按钮 */
+            gap: 12px;  /* 稍微减小间距以适应新按钮 */
+        }
+
+        .nav-block {
+            width: 110px;  /* 稍微减小每个块的宽度 */
+            height: 85px;  /* 相应调整高度 */
+        }
+        </style>
     <script src="/assets/js/highlight.min.js"></script>
     <script src="/assets/js/highlightjs-copy.min.js"></script>
     <script>
@@ -72,10 +216,23 @@
                     })
                     .catch(error => console.error('Error fetching config:', error));
             });
+            
     </script>
+    
+       <style>
+         #dify-chatbot-bubble-button {
+           background-color: #1C64F2 !important;
+         }
+         #dify-chatbot-bubble-window {
+           width: 24rem !important;
+           height: 40rem !important;
+         }
+       </style>
+       
     <title>Mentor-Platform</title>
 </head>
 <body>
+
     <div class="top-decor-line"></div>
     <div class="gradient"></div>
     <div class="row">
@@ -84,24 +241,27 @@
             <div class="field">
                 <a class="about" href="http://{{ config_options['site_config']['host'] }}:8889" title="首页"
                     style="text-decoration: none;">
-                    <img src="/assets/img/mentor.png" alt="Mentor" width="200" height="100" /></a>
+                    <img src="/assets/img/cssgpt.png" alt="Mentor" width="210" height="100" /></a>
             </div>
             <div class="title-bar">
                 {{ lang['app-title'] }}
             </div>
             <div class="field" >
-                <span class="about">{{ lang['vdbtable'] }}</span>
+                <!-- <span class="about">{{ lang['vdbtable'] }}</span>
                 <select class="shortselect"   id="vectordb" title="{{ lang['switchvdb'] }}">
-                    <option value="physics_mentor" selected>物理导师</option>
+                    <option value="image_to_text" selected>图片识别</option>
+                    <option value="ora_awr">AWR智能分析</option>
+                    <option value="ora_doc">DB_RAG问答</option>
+                    <!-- <option value="physics_mentor">物理导师</option>
                     <option value="chemistry_mentor" >化学导师</option>
                     <option value="physics_exam">物理模拟考试</option>
                     <option value="chemistry_exam">化学模拟考试</option>
                     <option value="english_mentor_rent">英语练习--租房</option>
                     <option value="english_mentor_word">英语练习--单词</option>
-                    <option value="code_generate">生成代码</option>
-                    <option value="ora_doc">DB_RAG问答</option>
+                    <option value="code_generate">生成代码</option> -->
                     <!-- <option value="mentor_olympic_maths">奥数--数学</option> -->
-                </select>
+                <!-- </select> --> 
+                
             </div>
             <hr class="three-d" style="display:none">
             <div class="input-container2" style="display:none">
@@ -178,7 +338,7 @@
             </div>
             <div class="new_convo">
                 <button id="start-recording" title="开始录音">
-                    <i class="fa fa-microphone"></i> 开始提问
+                    <i class="fa fa-microphone"></i> 语音提问
                 </button>
                 <button id="stop-recording" style="display:none" title="停止录音">
                     <i class="fa fa-stop"></i> 停止
@@ -243,6 +403,33 @@
             </div>
             <div class="box_main" id="messages">
             </div>
+            <div class="nav-blocks">
+                    <div class="nav-block" data-value="image_to_text">
+                        <i class="fa fa-file-image"></i>
+                        <span>图片识别</span>
+                    </div>
+                    <div class="nav-block" data-value="ora_awr">
+                        <i class="fa fa-line-chart"></i>
+                        <span>OEM告警分析</span>
+                    </div>
+                    <div class="nav-block" data-value="ora_doc">
+                        <i class="fa fa-database"></i>
+                        <span>DB_RAG问答</span>
+                    </div>
+                    <div class="nav-block" data-value="ora_check" onclick="toggleDifyChat()">
+                        <i class="fa fa-check-circle"></i>
+                        <span>巡检建议</span>
+                    </div>
+                    <div id="dify-chat-container" style="display:none; position:fixed; right:20px; bottom:20px; width:550px; height:900px; z-index:1000; border:none; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+                        <iframe src="https://udify.app/chatbot/2hsvlDzPMv1kGUzk" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>
+                    </div>
+                    <script>
+                        function toggleDifyChat() {
+                            const container = document.getElementById('dify-chat-container');
+                            container.style.display = container.style.display === 'none' ? 'block' : 'none';
+                        }
+                    </script>
+                </div>
             <div class="user-input">
                 <div class="box-foruser-input">
                     <div class="file-name" style="display:block">
@@ -266,7 +453,7 @@
     <div class="mobile-sidebar">
         <i class="fa-solid fa-bars"></i>
     </div>
-    <div id="welcome-message" class="welcome-message" style="display: none;>
+        <div id="welcome-message" class="welcome-message" >
         <p>{{ lang['welcome-msg'] }}</p>
         <div class="emoji-container" style="display:none">
             <div class="emoji-box" id="ragask">

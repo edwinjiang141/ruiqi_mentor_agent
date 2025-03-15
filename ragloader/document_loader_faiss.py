@@ -6,12 +6,13 @@ import pymupdf4llm
 import mammoth
 import markdownify
 from langchain.vectorstores import FAISS
-
+from server.logger import LOG
 from langchain_community.document_loaders import (
     PyMuPDFLoader,
     TextLoader,
     UnstructuredPowerPointLoader,
-    UnstructuredWordDocumentLoader
+    UnstructuredWordDocumentLoader,
+    UnstructuredFileLoader,UnstructuredMarkdownLoader
 )
 
 from langchain.text_splitter import (RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter)
@@ -27,6 +28,7 @@ LOADER_MAPPING = {
     ".pptx": (UnstructuredPowerPointLoader, {}),
     ".docx": (UnstructuredWordDocumentLoader, {}),
     ".html": (TextLoader, {"encoding": "utf8"}),
+    ".md":   (UnstructuredMarkdownLoader, {"encoding": "utf8"})
 }
 
 def load_document(file_path: str):
@@ -82,7 +84,7 @@ def convert_image(image):
     with image.open() as image_bytes:
         extension = image.content_type.split("/")[1]
         print(extension)
-        image_filename = "./output/image_{0}.{1}".format(str(time.time()),extension)
+        image_filename = "./oradoc/image_{0}.{1}".format(str(time.time()),extension)
         print(image_filename)
         with open(image_filename, 'wb') as f:
             f.write(image_bytes.read())
@@ -269,54 +271,58 @@ def get_context_of_last_title(file_path, title, begin_page, begin_position_x0, b
     return all_text
     
 def load_and_split_oracle_operation_document(file_path: str):
-    # b表示加粗，i表示斜体，去掉加粗和斜体
-    # 这段代码的作用是去掉了字体的加粗、斜体，带来的***
-    custom_styles = """ b =>
-                        i => """
-    # 转化Word文档为HTML，忽略图片
-    result = mammoth.convert_to_html(file_path, style_map=custom_styles, convert_image=ignore_image)
-    # 转化Word文档为HTML，提取图片
-    # result = mammoth.convert_to_html(file_path, style_map=custom_styles, convert_image=mammoth.images.img_element(convert_image))
-    # 获取HTML内容
-    html = result.value
-    # 转化HTML为Markdown
-    md = markdownify.markdownify(html,heading_style="ATX")
-    
-    headers_to_split_on = [
-        ("#", "Header 1"),
-        ("##", "Header 2"),
-        ("###", "Header 3"),
-        ("####", "Header 4"),
-        ("#####", "Header 5")
-    ]
-    # strip_headers=True 输出的chunk内容中，去掉标题。
-    # return_each_line 针对每个标题，聚合该标题的所有行
-    markdown_splitter = MarkdownHeaderTextSplitter(
-        headers_to_split_on=headers_to_split_on, 
-        return_each_line=False,
-        strip_headers=True
-    )
-    # 输出结果是一个Document列表
-    result_doc_list = []
-    docs = markdown_splitter.split_text(md)
-    # 针对拆分后生成的每个chunk，做一个处理，最终生成一个Document
-    for doc in docs:
-        #print(doc.metadata)
-        #下面这个if条件的作用，过滤掉没有标题的内容，主要是第一页和目录
-        if doc.metadata:
-           # 遍历该chunk的metadata内容，合并在一起。即针对每个标题，把父标题和子标题连接在一起
-           title = "-".join([doc.metadata[key] for key in doc.metadata])
-           # 这段代码的作用是解决了inst_id变成inst\_id，sql_id变成sql\_id，*变成\*问题
-           # Markdown中的星号和下划线有其他用处，转化为Markdown后，做了转义，即使用\_代替下划线，使用\*代替星号，需要做反向处理
-           content = doc.page_content.replace('\_','_').replace('\*','*')
-           # 把标题和内容合并在一起，作为Document的page_content
-           all_text = "".join(title + "\n" + content)
-           i_doc = Document(page_content=all_text, metadata={"source": file_path})
-           result_doc_list.append(i_doc)
-    
-    #text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    #splits = text_splitter.split_documents(md_header_splits)
-    return result_doc_list
+    try:
+        # b表示加粗，i表示斜体，去掉加粗和斜体
+        # 这段代码的作用是去掉了字体的加粗、斜体，带来的***
+        custom_styles = """ b =>
+                            i => """
+        # 转化Word文档为HTML，忽略图片
+        result = mammoth.convert_to_html(file_path, style_map=custom_styles, convert_image=ignore_image)
+        # 转化Word文档为HTML，提取图片
+        #result = mammoth.convert_to_html(file_path, style_map=custom_styles, convert_image=mammoth.images.img_element(convert_image))
+        LOG.info('result are:',result)
+        # 获取HTML内容
+        html = result.value
+        # 转化HTML为Markdown
+        md = markdownify.markdownify(html,heading_style="ATX")
+        LOG.info('md are:',md)
+        headers_to_split_on = [
+            ("#", "Header 1"),
+            ("##", "Header 2"),
+            ("###", "Header 3"),
+            ("####", "Header 4"),
+            ("#####", "Header 5")
+        ]
+        # strip_headers=True 输出的chunk内容中，去掉标题。
+        # return_each_line 针对每个标题，聚合该标题的所有行
+        markdown_splitter = MarkdownHeaderTextSplitter(
+            headers_to_split_on=headers_to_split_on, 
+            return_each_line=False,
+            strip_headers=True
+        )
+        # 输出结果是一个Document列表
+        result_doc_list = []
+        docs = markdown_splitter.split_text(md)
+        # 针对拆分后生成的每个chunk，做一个处理，最终生成一个Document
+        for doc in docs:
+            #print(doc.metadata)
+            #下面这个if条件的作用，过滤掉没有标题的内容，主要是第一页和目录
+            if doc.metadata:
+                # 遍历该chunk的metadata内容，合并在一起。即针对每个标题，把父标题和子标题连接在一起
+                title = "-".join([doc.metadata[key] for key in doc.metadata])
+                # 这段代码的作用是解决了inst_id变成inst\_id，sql_id变成sql\_id，*变成\*问题
+                # Markdown中的星号和下划线有其他用处，转化为Markdown后，做了转义，即使用\_代替下划线，使用\*代替星号，需要做反向处理
+                content = doc.page_content.replace('\_','_').replace('\*','*')
+                # 把标题和内容合并在一起，作为Document的page_content
+                all_text = "".join(title + "\n" + content)
+                i_doc = Document(page_content=all_text, metadata={"source": file_path})
+                result_doc_list.append(i_doc)
+        
+        #text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        #splits = text_splitter.split_documents(md_header_splits)
+        return result_doc_list
+    except Exception as e:
+            LOG.error(f"处理文件时出错: {e}")
     
 def load_mos_doc(file_path):
     doc=pymupdf.open(file_path)

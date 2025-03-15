@@ -1,0 +1,25 @@
+Host=xxxxx.cn.xxxxx
+Target type=Database Instance
+Target name=PCNE0011.cn.xxxxx_PCNE00112
+Categories=Fault
+Message=ORA-error stack (4031) logged in /u01/app/oracle/diag/rdbms/pcne0011/PCNE00112/trace/alert_PCNE00112.log.
+Severity=Warning
+Event reported time=Feb 27, 2025 11:51:23 AM CST
+Operating System=Linux
+Platform=x86_64
+Event Type=Metric Alert
+Event name=db_alert_log:genericErrStack
+Total Occurrences=2
+Occurrences in this event=2
+First Occurred in this event=Feb 27, 2025 11:51:23 AM CST
+Last Occurred in this event=Feb 27, 2025 11:51:24 AM CST
+Metric Group=DB Alert Log
+Metric=Generic Alert Log Error
+Metric value=ORA-04031: unable to allocate 12599368 bytes of shared memory ("large poo!""unknown obiect","large pool"."cTwR dba bufer 5"
+Key Value=27603 27626 27300 27301 27302
+Key Column 1=Witnessed Error Codes
+Rule Name=xxxxx_DBaaS_Prod_RuleSet,E2_DB_Alert
+Rule Owner=SYSMAN
+Update Details:
+ORA-error stack (4031) logged in /u01/app/oracle/diag/rdbms/pcne0011/PCNE00112/trace/alert_PCNE00112.log.
+Event is cleared by rule (Name = xxxxx_DBaaS_Prod_RuleSet, E2_DB_Alert; Owner = SYSMAN).

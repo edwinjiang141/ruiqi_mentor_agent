@@ -66,11 +66,11 @@ const handle_ask = async () => {
   message_input.focus();
 
   window.scrollTo(0, 0);
-  let message =  message_input.value;
+  let message = message_input.value;
 
   if (message.length > 0) {
     message_input.value = ``;
-    await ask_gpt( message);
+    await ask_gpt(message);
   }
 };
 
@@ -120,16 +120,35 @@ const ask_gpt = async (message) => {
     await new Promise((r) => setTimeout(r, 500));
 
     // Adding AI's message placeholder
+    
     message_box.insertAdjacentHTML('beforeend', `
       <div class="message system-message">
         <div class="user">
           ${gpt_image}
         </div>
         <div class="content" id="gpt_${window.token}">
-          <div id="cursor"></div>
         </div>
       </div>
     `);
+    message_box.insertAdjacentHTML('beforeend', `
+      <div class="message system-message">
+        <div id="cursor"></div>
+        <div class="image-content" id="img_${window.token}"></div>
+      </div>
+    `);
+    
+    
+    // else {
+    //   message_box.insertAdjacentHTML('beforeend', `
+    //     <div class="message system-message">
+    //       <div class="user">
+    //         ${gpt_image}
+    //       </div>
+    //       <div class="content" id="gpt_${window.token}">
+    //       </div>
+    //     </div>
+    //   `);
+    // }
 
     message_box.scrollTop = message_box.scrollHeight;
     await new Promise((r) => setTimeout(r, 1000));
@@ -164,7 +183,8 @@ const ask_gpt = async (message) => {
         search_range: document.getElementById("search_range").value,
         memory: document.getElementById("memory").value,
         languageSelect: document.getElementById("languageSelect").value,
-        mentor_agent: document.getElementById("vectordb").value,
+        // mentor_agent: document.getElementById("vectordb").value,
+        mentor_agent: document.querySelector('.nav-block.active').dataset.value,
         cssgptinvoke: true,
         content_type: "text",
         parts: [
@@ -178,13 +198,12 @@ const ask_gpt = async (message) => {
     };
 
     formData.append('meta', JSON.stringify(metaContent));
-    //console.log("files array:",file)
+    console.log("files array:",file)
     if(file){
       if (file.length > 0) {
         for (let i = 0; i < file.length; i++) {
             formData.append("upload_file", file[i]);
         }
-        file.length=0;
       } else {
           console.log("No files selected.");
       }
@@ -201,12 +220,69 @@ const ask_gpt = async (message) => {
       body: formData,
     });
 
-    file = null;
+    //对话界面添加图片的显示 2025-01-10
+    if(file){
+      if (file.length > 0) {
+        console.log('files are ',file)
+        Array.from(file).forEach(file => {
+          // const fileType = getFileTypeIcon(file);1
+          // const listItem = document.createElement('li');
+          // listItem.innerHTML = `${fileType} ${file.name}`;
+          // fileList.appendChild(listItem);
+          const fileReader = new FileReader();
+          fileReader.onload = function(event) {
+              const imgContainer = document.createElement('div');
+              imgContainer.classList.add('image-container');
+              imgContainer.style.position = "relative";
 
+              const img = document.createElement('img');
+              img.src = event.target.result;
+              img.classList.add('thumbnail');
+              img.style.width = "300px"; // Set fixed width for thumbnails
+              img.style.height = "150px"; // Set fixed height for thumbnails
+              img.style.objectFit = "cover"; // Ensure proper aspect ratio
+
+              const closeButton = document.createElement('span');
+              // closeButton.textContent = '×';
+              // closeButton.classList.add('close-btn');
+              // closeButton.style.position = "absolute";
+              // closeButton.style.top = "5px";
+              // closeButton.style.right = "5px";
+              // closeButton.style.cursor = "pointer";
+              // closeButton.style.background = "rgba(0, 0, 0, 0.5)";
+              // closeButton.style.color = "white";
+              // closeButton.style.borderRadius = "50%";
+              // closeButton.style.width = "20px";
+              // closeButton.style.height = "20px";
+              // closeButton.style.display = "flex";
+              // closeButton.style.alignItems = "center";
+              // closeButton.style.justifyContent = "center";
+              // closeButton.addEventListener('click', function () {
+              //     imgContainer.remove(); // Remove image when clicked
+              // });
+
+              imgContainer.appendChild(img);
+              imgContainer.appendChild(closeButton);
+              document.getElementById(`img_${window.token}`).style.display = "flex"; // Set flexbox layout for horizontal alignment
+              document.getElementById(`img_${window.token}`).style.flexWrap = "wrap"; // Allow wrapping if too many images
+              document.getElementById(`img_${window.token}`).style.gap = "80px"; // Add space between images
+              document.getElementById(`img_${window.token}`).style.justifyContent = "center"; // Center align images horizontally
+              document.getElementById(`img_${window.token}`).appendChild(imgContainer);
+              
+          };
+
+          if (file.type.startsWith('image')) {
+              fileReader.readAsDataURL(file);
+          }
+        });  
+      }
+    }
     const reader = response.body.getReader();
     let text = ``;
     let imageUrls = [];
-
+    if(file) {
+      file.length = 0
+    }
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -239,8 +315,10 @@ const ask_gpt = async (message) => {
           };
           document.getElementById(`gpt_${window.token}`).appendChild(img);
         });
+        
       }
-
+      
+      
       // Update the message content with text (only if it's not an image URL)
       let nonImageText = chunk.replace(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif|image|im))/gi, '');
       if (nonImageText.trim().length > 0) {
@@ -251,8 +329,9 @@ const ask_gpt = async (message) => {
       }
 
       message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
+      
     }
-
+    
     add_message(window.conversation_id, "user", message);
     add_message(window.conversation_id, "assistant", text);
 

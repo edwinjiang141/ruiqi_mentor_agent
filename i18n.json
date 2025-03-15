@@ -5,8 +5,8 @@
             "code": "zh_CN",
             "name": "简体中文",
             "lang": {
-                "app-title": "AI Agent 平台",
-                "welcome-msg": "欢迎使用初中导师平台，您今天想问什么问题?",
+                "app-title": "RAG Agent",
+                "welcome-msg": "您今天想问什么问题?",
                 "newsess": "新建对话",
                 "delsess": "删除所有对话",
                 "export": "带出对话",

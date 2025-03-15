@@ -102,6 +102,10 @@ def config_page():
 def readme_page():
     return send_from_directory('./../client/html', 'readme.html')
 
+@app.route('/download/<filename>')
+def download(filename):
+    return send_from_directory('./../download_folder', filename, as_attachment=True)
+
 @app.route('/ragloader')
 def ragloader_page():
     print("return to index")
