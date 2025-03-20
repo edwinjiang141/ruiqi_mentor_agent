@@ -21,6 +21,7 @@ import numpy as np
 from .handleFile import readfile
 # from .tavily_search import tavily_search
 from .scenario_agent import ScenarioAgent
+from .ora_tools import Oratools
 from .code_assistant_agent import CodeAssistantAgent
 from langchain_community.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage 
@@ -46,6 +47,7 @@ from werkzeug.utils import secure_filename
 from langchain.vectorstores import FAISS
 import re
 from docx import Document
+from openai import OpenAI
 #音频处理
 # 模型名称和参数配置
 # model_name_or_path = "/root/autodl-tmp/models/whisper-large-v2"  # Whisper 模型名称
@@ -237,143 +239,220 @@ class Backend_Api:
                 total_content=''
                 # file_content = upload_file.read()
                 file_content = ''
+                answer = ""
                 for file_ in upload_file:
                     file_content,file_ext = readfile(file_,inputmessage)
-              
-                if file_ext.endswith('.txt'):
-                    # 使用大语言模型生成问题的提示词
-                    prompt_template = """请仔细阅读以下文本， 基于文本内容，提出一个有深度的问题.
-                    文本内容：{text}"""
-                    
-                    # 使用 ChatOllama 生成问题
-                    llm = ChatOllama(model="mistral-nemo:12b", temperature=0.0)
-                    prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
-                    chain = prompt | llm
-                    response = chain.invoke({"text": file_content})
-                    question = response.content
-                    # 处理文件的逻辑
-                # DOWNLOAD_FOLDER = 'download_folder/'
-                # create_word_document_link(file_content, DOWNLOAD_FOLDER,conversation_id)
-                # doc_link = 'http://127.0.0.1:6006/download/'+conversation_id+'.docx'
-
-                if choosedmodel in self.ollamalist:
-                    agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
-                else:
-                    agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
-                
-                
-                if mentor_agent in ('ora_doc','ora_awr'):
-                    enbeddings = OpenAIEmbeddings(openai_api_key = os.environ["OPENAI_API_KEY"],openai_api_base = "https://pro.aiskt.com/v1")
-                    #当向量数据库中没有合适答案时，使用大语言模型能力
-                    LOG.info(f"mentor_agent: {mentor_agent}")
-                    
-                    prompt_template = """ <指令>根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，
-                                        一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，答案请使用中文。 </指令>
-                                        <已知信息>{context}</已知信息>
-                                        <问题>{question}</问题> 
-                                      """
-                    
-                    prompt = PromptTemplate(template = prompt_template,input_variables=["context", "question"])
-
-                    document_search = FAISS.load_local("ora_doc_index", enbeddings,allow_dangerous_deserialization = True)
-
-                    #llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0,openai_organization = "org-cODSJjftWgVspplR3MwUi2HN",openai_api_key = os.environ["OPENAI_API_KEY"])
-                    # llm = ChatOllama(model="mistral-nemo:12b",max_tokens=8192, temperature=0.0)
-                    # #llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0,openai_api_key = os.environ["OPENAI_API_KEY"],openai_api_base = "https://pro.aiskt.com/v1")
-                    # qa_chain = RetrievalQA.from_llm(llm,
-                    #                             retriever=document_search.as_retriever(search_type="similarity_score_threshold", 
-                    #                                                         search_kwargs={"score_threshold": 0.3, "k": 1}),prompt=prompt)
-                    # # qa_chain.combine_documents_chain.document_prompt = PromptTemplate(input_variables=["query"],template="{page_content}")
-                    # qa_chain.return_source_documents=True
-                    LOG.info(f"收到前端请求的问题是: {question}")
-                    # result = qa_chain({"query": question})
-                    
-                    # LOG.info(f"收到前端请求数据: {result}")
-                    # prompt_template = """请仔细阅读以下文本， 不能随意进行更改，仅仅从语法修饰方面进行修改后输出
-                    # 文本内容：{text}"""
-                    
-                    # # 使用 ChatOllama 生成问题
-                    # llm = ChatOllama(model="mistral-nemo:12b", temperature=0.0)
-                    # prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
-                    # chain = prompt | llm
-                    # response = chain.invoke({"text": result['source_documents'][0].page_content})
-                    # answer = response.content
-                    search_results = document_search.similarity_search_with_score(inputmessage, k=2)
-                    if not search_results:
-                        return jsonify({"status": "error", "message": "未找到相关结果"}), 404
-
-                    search_results = sorted(search_results, key=lambda x: x[1])[:1]  # 按距离升序，取最相近的 2 个
-
-                    # 解析返回结果
-                    results = []
-                    for doc, score in search_results:
-                        results.append({
-                            "document": doc.metadata.get("source", "未知文档"),
-                            "content": doc.page_content,
-                            "score": float(score)
-                        })
-                    
-                    LOG.info(f"收到前端请求数据: {results}")
-                    # agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
-                    # if not result["source_documents"]:
-                    #     response = agents.chat_with_history(inputmessage)
-                    #     LOG.info(f"没有发现相关文档")
-                    # else:
-                    #     response = agents.chat_with_history(result['result']+' Quesion is :'+inputmessage)
-                    prompt_template = """请仔细阅读以下文本， 不能随意进行更改，仅仅从语法修饰方面进行修改后输出,
-                    根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分。不要把模型思考的过程进行输出
-                        要求：
-                        1、先按照逻辑顺序，生成一整套流程，不需要进行输出
-                        2、针对提出的问题，去对应已经生成的这套流程中的某个环节，然后从这个环节及它以后的流程进行输出，避免无效信息的输出。如果问题需要整个流程运行完才能解决，那就输出整个流程
-                    文本内容：{text}"""
-                    
-                    # 使用 ChatOllama 生成问题
-                    llm = ChatOllama(model=choosedmodel, temperature=0.0)
-                    prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
-                    chain = prompt | llm
-                    response = chain.invoke({"text": results[0]['content']})
-                    answer = response.content
-
-                    # agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
-                    # if not result["source_documents"]:
-                    #     response = agents.chat_with_history(question)
-                    #     LOG.info(f"没有发现相关文档")
-                    # else:
-                    #     response = agents.chat_with_history(result['source_documents'][1].page_content)
-                    #     total_content = file_content+response.content
-                    #     source_doc = result["source_documents"]
-                    #     LOG.info(f"发现相关文档")
-                    import time
-                    def string_generator(long_string, chunk_size=10):
-                        return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
-                    def stream():
-                        # for chunk in response.content:
-                        #     yield chunk
-                        for chunk in string_generator(answer):
-                            yield chunk
-                            time.sleep(0.2)  # 模拟流式输出的延迟
+                    if file_ext.endswith('.txt'):
+                        # 使用大语言模型生成问题的提示词
+                        prompt_template = """请仔细阅读以下文本， 基于文本内容表达的中心含义，提出一个问题.
+                        文本内容：{text}"""
                         
-                        # if doc_link:
-                        #     yield f"\n\n文档链接:\n\n<a href='{doc_link}' target='_blank'>{doc_link}</a>\n\n"
+                        # 使用 ChatOllama 生成问题
+                        llm = ChatOllama(model=choosedmodel, temperature=0.0)
+                        prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
+                        chain = prompt | llm
+                        response = chain.invoke({"text": file_content})
+                        question = response.content
+                        # 处理文件的逻辑
+                    # DOWNLOAD_FOLDER = 'download_folder/'
+                    # create_word_document_link(file_content, DOWNLOAD_FOLDER,conversation_id)
+                    # doc_link = 'http://127.0.0.1:6006/download/'+conversation_id+'.docx'
 
-                    return self.app.response_class(stream(), mimetype="text/event-stream")
-                else:
-                    agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
-                    response = agents.chat_with_history(inputmessage+'  '+file_content)
-                    import time
-                    def string_generator(long_string, chunk_size=10):
-                        return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
-                    def stream():
-                        # for chunk in response.content:
-                        #     yield chunk
-                        for chunk in string_generator(response.content):
-                            yield chunk
-                            time.sleep(0.2)  # 模拟流式输出的延迟
+                    # if choosedmodel in self.ollamalist:
+                    #     agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
+                    # else:
+                    #     agents = ScenarioAgent('kimi',mentor_agent,choosedmodel,conversation_id)
+                    
+                   
+                    if mentor_agent in ('ora_doc','ora_awr'):
+                        # enbeddings = OpenAIEmbeddings(openai_api_key = os.environ["OPENAI_API_KEY"],openai_api_base = "https://pro.aiskt.com/v1")
+                        # #当向量数据库中没有合适答案时，使用大语言模型能力
+                        # LOG.info(f"mentor_agent: {mentor_agent}")
                         
-                        # if doc_link:
-                        #     yield f"\n\n文档链接:\n\n<a href='{doc_link}' target='_blank'>{doc_link}</a>\n\n"
+                        # document_search = FAISS.load_local("ora_doc_index", enbeddings,allow_dangerous_deserialization = True)
 
-                    return self.app.response_class(stream(), mimetype="text/event-stream")
+                        #LOG.info(f"收到前端请求的问题是: {question}")
+
+                        # search_results = document_search.similarity_search_with_score(question, k=2)
+                        # if not search_results:
+                        #     return jsonify({"status": "error", "message": "未找到相关结果"}), 404
+
+                        # search_results = sorted(search_results, key=lambda x: x[1])[:1]  # 按距离升序，取最相近的 2 个
+
+                        # # 解析返回结果
+                        # results = []
+                        # for doc, score in search_results:
+                        #     results.append({
+                        #         "document": doc.metadata.get("source", "未知文档"),
+                        #         "content": doc.page_content,
+                        #         "score": float(score)
+                        #     })
+                        
+                        # LOG.info(f"收到前端请求数据: {results}")
+                        # prompt_template = """请仔细阅读以下文本， 不能随意进行更改，仅仅从语法修饰方面进行修改后输出,
+                        # 根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分。不要把模型思考的过程进行输出
+                        #     要求：
+                        #     1、先按照逻辑顺序，生成一整套流程，不需要进行输出
+                        #     2、针对提出的问题，去对应已经生成的这套流程中的某个环节，然后从这个环节及它以后的流程进行输出，避免无效信息的输出。如果问题需要整个流程运行完才能解决，那就输出整个流程
+                        # 文本内容：{text}"""
+                        
+                        # llm = ChatOllama(model=choosedmodel, temperature=0.0)
+                        # prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
+                        # chain = prompt | llm
+                        # response = chain.invoke({"text": results[0]['content']})
+                        # answer = answer+response.content+"\n\n"
+
+                        
+                        tools = [
+                                    {
+                                        "type": "function",
+                                        "function": {
+                                            "name": "ora_tablespace",
+                                            "description": "分析关于表空间报错的问题",
+                                            "parameters": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "question": {
+                                                        "type": "string",
+                                                        "description": "问题描述"
+                                                    }
+                                                },
+                                                "required": ["question"]
+                                            },
+                                        }
+                                    },
+                                    {
+                                        "type": "function",
+                                        "function": {
+                                            "name": "ora_error",
+                                            "description": "分析关于ORA 的报错",
+                                            "parameters": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "question": {
+                                                        "type": "string",
+                                                        "description": "问题描述"
+                                                    }
+                                                },
+                                                "required": ["question"] 
+                                            },
+                                        }
+                                    },
+                                ]
+                        messages = [
+                                        {"role": "user", "content":question}
+                                    ]
+                        
+                        
+
+                        def send_messages(messages):
+                            response = client.chat.completions.create(
+                                model="deepseek-chat",
+                                messages=messages,
+                                tools=tools,
+                                tool_choice="auto"
+                            )
+                            return response.choices[0].message
+
+                        client = OpenAI(
+                            api_key=os.getenv("DEEPSEEK_API_KEY"),
+                            base_url="https://api.deepseek.com",
+                        )
+                        message = send_messages(messages)
+                        # messages.append(message)
+                        # print(message.tool_calls[0])
+                        function_args = json.loads(message.tool_calls[0].function.arguments)
+                        print(function_args['question'])
+                        oratool = Oratools(choosedmodel)
+                        if message.tool_calls[0].function.name == 'ora_error':
+                            answer =oratool.ora_error(function_args['question'])
+                        elif message.tool_calls[0].function.name == 'ora_tablespace':
+                            answer = oratool.ora_tablespace(function_args['question'])
+                        # print(tool)
+                        # print(message.tool_calls[0].id)
+                        # messages.append({"role": "tool", "tool_call_id": message.tool_calls[0].id, "content": question})
+                        # message = send_messages(messages)
+
+                        # print(f"Model>\t {message}")
+                        # answer = message.content
+                    elif mentor_agent in ('data_analysis'):
+
+                        prompt_template = """根据输入的数据库一周的系统负载数据, 进行如下分析：
+                                            第一步，先根据时间分布，先对各列数据进行分析，找出特征点，对整体数据进行分类，并列出具体的数据说明，给出每种类别的描述。
+                                            第二步，根据数据和分类的特征，比较基于多元状态估计的MSET算法和随即森林、Z-score异常检测 这三个算法，找出最合适的算法，并给出基于上述系统负载数据的科学解释。
+                                            第三步 然后用这个确定的异常检测算法，分析数据中是否存在异常点并输出异常点数据的信息，找出不超过2个最明显的异常点，用表格的形式列出改异常点的异常输出。并给出合理的解释
+                                            """
+                        
+                        # 使用 ChatOllama 生成问题
+                        # llm = ChatOllama(model=choosedmodel, temperature=0.0)
+                        # prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
+                        # chain = prompt | llm
+                        # response = chain.invoke({"text": file_content})
+                        # answer = response.content
+                        client = OpenAI(
+                            api_key=os.getenv("DEEPSEEK_API_KEY"),
+                            base_url="https://api.deepseek.com",
+                        )
+
+                        response = client.chat.completions.create(
+                            model="deepseek-chat",
+                            messages=[
+                                {"role": "system", "content": prompt_template},
+                                {"role": "user", "content": file_content},
+                            ],
+                            stream=False
+                        )
+                        
+                        findings = response.choices[0].message.content
+                        prompt_template = """请仔细阅读以下检测结果， 依据对异常点的解释.要求总结成一个技术问题：目的是如何解决发现的异常点以及造成异常的原因
+                        例如按照如下样例格式输出：
+                        异常点1（时间）：
+                            异常现象：
+                            可能原因：
+                            解决方案：
+                        文本内容：{text}"""
+                        
+                        # 使用 ChatOllama 生成问题
+                        llm = ChatOllama(model=choosedmodel, temperature=0.0)
+                        prompt = PromptTemplate(template=prompt_template, input_variables=["text"])
+                        chain = prompt | llm
+                        response = chain.invoke({"text": findings})
+                        question = response.content
+                        print(f"question: {question}")
+                        oratool = Oratools(choosedmodel)
+                        solution = oratool.check_rag(question)
+                        answer = findings + question
+                    else:
+                        agents = ScenarioAgent('ollama',mentor_agent,choosedmodel,conversation_id)
+                        answer = agents.chat_with_history(inputmessage+'  '+file_content)
+                        import time
+                        def string_generator(long_string, chunk_size=10):
+                            return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                        def stream():
+                            # for chunk in response.content:
+                            #     yield chunk
+                            for chunk in string_generator(answer.content):
+                                yield chunk
+                                time.sleep(0.2)  # 模拟流式输出的延迟
+                            
+                            # if doc_link:
+                            #     yield f"\n\n文档链接:\n\n<a href='{doc_link}' target='_blank'>{doc_link}</a>\n\n"
+
+                        return self.app.response_class(stream(), mimetype="text/event-stream")
+                import time
+                def string_generator(long_string, chunk_size=10):
+                    return (long_string[i:i + chunk_size] for i in range(0, len(long_string), chunk_size))
+                def stream():
+                    # for chunk in response.content:
+                    #     yield chunk
+                    for chunk in string_generator(answer):
+                        yield chunk
+                        time.sleep(0.2)  # 模拟流式输出的延迟
+                    
+                    # if doc_link:
+                    #     yield f"\n\n文档链接:\n\n<a href='{doc_link}' target='_blank'>{doc_link}</a>\n\n"
+
+                return self.app.response_class(stream(), mimetype="text/event-stream")
             else:
                 file_content = ""  # 或者设置为其他默认值
 
@@ -451,13 +530,13 @@ class Backend_Api:
                     #                     <问题>{question}</问题>
                     #                 """
                     
-                    prompt_template = """ <指令>根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，
-                                        一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，答案请使用中文。 </指令>
-                                        <已知信息>{context}</已知信息>
-                                        <问题>{question}</问题> 
-                                    """
+                    # prompt_template = """ <指令>根据知识库已知的信息，一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，
+                    #                     一切生成的内容必须都是知识库里的内容，不允许在答案中添加编造成分，答案请使用中文。 </指令>
+                    #                     <已知信息>{context}</已知信息>
+                    #                     <问题>{question}</问题> 
+                    #                 """
                     
-                    prompt = PromptTemplate(template = prompt_template,input_variables=["context", "question"])
+                    # prompt = PromptTemplate(template = prompt_template,input_variables=["context", "question"])
 
                     document_search = FAISS.load_local("ora_doc_index", enbeddings,allow_dangerous_deserialization = True)
 
@@ -474,7 +553,7 @@ class Backend_Api:
                     if not search_results:
                         return jsonify({"status": "error", "message": "未找到相关结果"}), 404
 
-                    search_results = sorted(search_results, key=lambda x: x[1])[:1]  # 按距离升序，取最相近的 2 个
+                    search_results = sorted(search_results, key=lambda x: -x[1])[:1]  # 按距离升序，取最相近的 2 个
 
                     # 解析返回结果
                     results = []

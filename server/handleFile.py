@@ -31,4 +31,8 @@ def readfile(upload_file,inputmessage):
         with open(upload_file.filename, 'r', encoding='utf-8') as f:
             file_content = f.read()
         return file_content,file_ext
+    elif file_ext.endswith('.csv'):
+        with open(upload_file.filename, 'r', encoding='utf-8') as f:
+            file_content = f.read()
+        return file_content,file_ext
         

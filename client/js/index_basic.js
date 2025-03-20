@@ -417,8 +417,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileInfo.style.display = 'none';
                 break;
             case 'ora_check':  // 添加新的模式
-            messageInput.placeholder = '请输入巡检相关问题...';
-            fileInfo.style.display = 'block';
+                messageInput.placeholder = '请输入巡检相关问题...';
+                fileInfo.style.display = 'block';
+            case 'data_analysis':
+                messageInput.placeholder = '请上传CSV文件...';
+                fileInfo.style.display = 'block';
             break;
         }
     }

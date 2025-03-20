@@ -184,6 +184,63 @@
             width: 110px;  /* 稍微减小每个块的宽度 */
             height: 85px;  /* 相应调整高度 */
         }
+
+        /* 文件信息显示*/
+        .file-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--blur-bg);
+            border-radius: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .file-item i {
+            font-size: 16px;
+        }
+
+        .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .nav-block[data-value="data_analysis"] {
+        border-left: 4px solid #E91E63;
+        }
+
+        .nav-block[data-value="data_analysis"].active {
+            background: linear-gradient(145deg, #E91E63, #C2185B);
+        }
+
+        /* 调整导航块容器宽度以适应新增的按钮 */
+        .nav-blocks {
+            max-width: 1000px;  /* 增加最大宽度以容纳新按钮 */
+        }
+
+        .nav-block {
+            width: 100px;  /* 稍微调整每个块的宽度 */
+            height: 85px;
+        }
+
+    /* 移动端适配 */
+        @media (max-width: 768px) {
+            .nav-block {
+                width: calc(33.33% - 10px);
+            }
+        }
+
         </style>
     <script src="/assets/js/highlight.min.js"></script>
     <script src="/assets/js/highlightjs-copy.min.js"></script>
@@ -410,7 +467,7 @@
                     </div>
                     <div class="nav-block" data-value="ora_awr">
                         <i class="fa fa-line-chart"></i>
-                        <span>OEM告警分析</span>
+                        <span>告警分析</span>
                     </div>
                     <div class="nav-block" data-value="ora_doc">
                         <i class="fa fa-database"></i>
@@ -419,6 +476,10 @@
                     <div class="nav-block" data-value="ora_check" onclick="toggleDifyChat()">
                         <i class="fa fa-check-circle"></i>
                         <span>巡检建议</span>
+                    </div>
+                    <div class="nav-block" data-value="data_analysis">
+                        <i class="fa fa-chart-bar"></i>
+                        <span>数据异常分析</span>
                     </div>
                     <div id="dify-chat-container" style="display:none; position:fixed; right:20px; bottom:20px; width:550px; height:900px; z-index:1000; border:none; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
                         <iframe src="https://udify.app/chatbot/2hsvlDzPMv1kGUzk" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>
@@ -436,7 +497,7 @@
                         <div id="file-info"></div>
 
                         <input type="file" id="fileElem" multiple
-                            accept=".txt,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
+                            accept=".txt,.csv,.log,.java,.py,.bat,.sh,.perl,.sql,.html,.js,.css,.pdf,.docx,.png,.jpg,.jpeg,.gif"
                             onchange="handleFiles(this.files)">
                     </div>
                     <div class="input-box">
